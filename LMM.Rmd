@@ -4,7 +4,6 @@ author: "May"
 date: "2/22/2021"
 output: 
   html_document:
-    # self_contained: false
     toc: true
     toc_float: true
     toc_depth: 4
