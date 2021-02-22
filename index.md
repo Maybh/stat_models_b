@@ -1,4 +1,4 @@
-## Welcome to GitHub Pages
+## Stat Models B
 
 You can use the [editor on GitHub](https://github.com/Maybh/stat_models_b/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
 
