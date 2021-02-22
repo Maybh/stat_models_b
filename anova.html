@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="May" />
+
+
+<title>ANOVA</title>
+
+<script src="anova_files/header-attrs-2.1/header-attrs.js"></script>
+<script src="anova_files/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="anova_files/bootstrap-3.3.5/css/united.min.css" rel="stylesheet" />
+<script src="anova_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="anova_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="anova_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="anova_files/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="anova_files/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="anova_files/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="anova_files/navigation-1.1/tabsets.js"></script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #c4a000; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #000000; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #000000; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #000000; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">ANOVA</h1>
+<h4 class="author">May</h4>
+<h4 class="date">2/20/2021</h4>
+
+</div>
+
+
+<div id="diet-data-set" class="section level1">
+<h1>Diet Data Set</h1>
+<p>This data set contains information on 76 people using one of three diets.</p>
+<p><strong>Source</strong> <a href="https://www.sheffield.ac.uk/mash/statistics/datasets">link</a></p>
+<p><strong>Format</strong></p>
+<ul>
+<li><code>gender</code>: 1 = male, 0 = female</li>
+<li><code>Age</code>: Age (years)</li>
+<li><code>Height</code>: Height (cm)</li>
+<li><code>preweight</code>: Weight before the diet (kg)</li>
+<li><code>Diet</code>: Diet Type</li>
+<li><code>weight6weeks</code> - Weight after 6 weeks (kg)</li>
+</ul>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>diet <span class="ot">=</span> <span class="fu">read.csv</span>(<span class="st">&quot;datasets/Diet_R.csv&quot;</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>diet <span class="ot">=</span> diet <span class="sc">%&gt;%</span> <span class="fu">drop_na</span>()</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>diet<span class="sc">$</span>weight_loss <span class="ot">=</span> diet<span class="sc">$</span>pre.weight <span class="sc">-</span> diet<span class="sc">$</span>weight6weeks</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>diet<span class="sc">$</span>Diet <span class="ot">=</span> <span class="fu">factor</span>(diet<span class="sc">$</span>Diet)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(diet)</span></code></pre></div>
+<pre><code>## Observations: 76
+## Variables: 8
+## $ Person       &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 27, 28,...
+## $ gender       &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...
+## $ Age          &lt;int&gt; 22, 46, 55, 33, 50, 50, 37, 28, 28, 45, 60, 48, 41, 37...
+## $ Height       &lt;int&gt; 159, 192, 170, 171, 170, 201, 174, 176, 165, 165, 173,...
+## $ pre.weight   &lt;int&gt; 58, 60, 64, 64, 65, 66, 67, 69, 70, 70, 72, 72, 72, 82...
+## $ Diet         &lt;fct&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, ...
+## $ weight6weeks &lt;dbl&gt; 54.2, 54.0, 63.3, 61.1, 62.2, 64.0, 65.0, 60.5, 68.1, ...
+## $ weight_loss  &lt;dbl&gt; 3.8, 6.0, 0.7, 2.9, 2.8, 2.0, 2.0, 8.5, 1.9, 3.1, 1.5,...</code></pre>
+<div id="one-way-anova" class="section level2">
+<h2>One-way ANOVA</h2>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> diet, <span class="fu">aes</span>(<span class="at">x=</span>Diet, <span class="at">y=</span> weight_loss, <span class="at">color=</span>Diet)) <span class="sc">+</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">outlier.colour=</span><span class="st">&quot;red&quot;</span>, <span class="at">outlier.shape=</span><span class="dv">8</span>,<span class="at">outlier.size=</span><span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">&quot;Diet Type&quot;</span>, <span class="at">y=</span> <span class="st">&quot;Weight Loss&quot;</span>) <span class="sc">+</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;&quot;</span>)</span></code></pre></div>
+<p><img src="anova_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<div id="analysis-of-variance" class="section level3">
+<h3>Analysis of Variance</h3>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>diet.aov <span class="ot">=</span> <span class="fu">aov</span>(weight_loss<span class="sc">~</span>Diet,<span class="at">data=</span>diet)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(diet.aov)</span></code></pre></div>
+<pre><code>##             Df Sum Sq Mean Sq F value Pr(&gt;F)   
+## Diet         2   60.5  30.264   5.383 0.0066 **
+## Residuals   73  410.4   5.622                  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</div>
+<div id="checking-assumptions" class="section level3">
+<h3>Checking Assumptions</h3>
+<div id="levins-test" class="section level4">
+<h4>Levin’s test</h4>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lawstat)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">levene.test</span>(diet<span class="sc">$</span>weight_loss, diet<span class="sc">$</span>Diet, <span class="at">location =</span> <span class="st">&quot;mean&quot;</span>)</span></code></pre></div>
+<pre><code>## 
+##  Classical Levene&#39;s test based on the absolute deviations from the mean
+##  ( none not applied because the location is not set to median )
+## 
+## data:  diet$weight_loss
+## Test Statistic = 0.49392, p-value = 0.6123</code></pre>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># manually</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># adding column of the group mean of weight loss </span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>diet <span class="ot">=</span> diet <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(Diet) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">group_mean =</span> <span class="fu">mean</span>(weight_loss))</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># adding Z column: </span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>diet<span class="sc">$</span>z <span class="ot">=</span> <span class="fu">abs</span>(diet<span class="sc">$</span>weight_loss <span class="sc">-</span> diet<span class="sc">$</span>group_mean)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>aov_equal_var <span class="ot">=</span> <span class="fu">aov</span>(z<span class="sc">~</span>Diet,<span class="at">data=</span>diet)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(aov_equal_var)</span></code></pre></div>
+<pre><code>##             Df Sum Sq Mean Sq F value Pr(&gt;F)
+## Diet         2   2.05   1.027   0.494  0.612
+## Residuals   73 151.74   2.079</code></pre>
+</div>
+<div id="diagnostic-plots" class="section level4">
+<h4>Diagnostic plots</h4>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(diet.aov)</span></code></pre></div>
+<p><img src="anova_files/figure-html/unnamed-chunk-7-1.png" width="672" /><img src="anova_files/figure-html/unnamed-chunk-7-2.png" width="672" /><img src="anova_files/figure-html/unnamed-chunk-7-3.png" width="672" /><img src="anova_files/figure-html/unnamed-chunk-7-4.png" width="672" /></p>
+<p>We can also create these plot manually:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># residudal vs fitted plot:</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>diet.resid <span class="ot">=</span> <span class="fu">resid</span>(diet.aov)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>diet.predict <span class="ot">=</span> <span class="fu">predict</span>(diet.aov)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(diet.resid<span class="sc">~</span>diet.predict)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="dv">0</span>,<span class="dv">0</span>, <span class="at">col=</span><span class="st">&quot;red&quot;</span>)</span></code></pre></div>
+<p><img src="anova_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="do">## qqplot:</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(diet.resid)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">qqline</span>(diet.resid)</span></code></pre></div>
+<p><img src="anova_files/figure-html/unnamed-chunk-8-2.png" width="672" /></p>
+</div>
+</div>
+<div id="post-hoc-analysis" class="section level3">
+<h3>Post-hoc analysis</h3>
+<div id="estimated-expectations" class="section level4">
+<h4>Estimated Expectations</h4>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tapply</span>(<span class="at">X =</span> diet<span class="sc">$</span>weight_loss, <span class="at">INDEX =</span>  diet<span class="sc">$</span>Diet, <span class="at">FUN =</span> mean )</span></code></pre></div>
+<pre><code>##        1        2        3 
+## 3.300000 3.268000 5.148148</code></pre>
+</div>
+<div id="finding-which-group-is-different-from-all-other-groups" class="section level4">
+<h4>Finding which group is different from all other groups</h4>
+<p><span style="color: red;">????? </span></p>
+</div>
+<div id="pairwise-comparisons" class="section level4">
+<h4>Pairwise Comparisons</h4>
+<div id="regular-no-multiple-correction" class="section level5">
+<h5>Regular (No multiple correction)</h5>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(multcomp)</span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>contr <span class="ot">=</span> <span class="fu">rbind</span>(</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;2 - 1&quot;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>),</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;3 - 1&quot;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">1</span>),</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;3 - 2&quot;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="sc">-</span><span class="dv">1</span>,<span class="dv">1</span>)</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="do">### set up general linear hypothesis</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>pairwise_res <span class="ot">=</span> <span class="fu">glht</span>(diet.aov,  <span class="at">linfct =</span> <span class="fu">mcp</span>(<span class="at">Diet =</span> contr))</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(pairwise_res)</span></code></pre></div>
+<pre><code>## 
+##   Simultaneous Tests for General Linear Hypotheses
+## 
+## Multiple Comparisons of Means: User-defined Contrasts
+## 
+## 
+## Fit: aov(formula = weight_loss ~ Diet, data = diet)
+## 
+## Linear Hypotheses:
+##            Estimate Std. Error t value Pr(&gt;|t|)  
+## 2 - 1 == 0  -0.0320     0.6776  -0.047   0.9988  
+## 3 - 1 == 0   1.8481     0.6652   2.778   0.0189 *
+## 3 - 2 == 0   1.8801     0.6581   2.857   0.0152 *
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## (Adjusted p values reported -- single-step method)</code></pre>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># calpha = univariate_calpha() - without correction </span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>pairwise_ci <span class="ot">=</span> <span class="fu">confint</span>(pairwise_res, <span class="at">calpha =</span> <span class="fu">univariate_calpha</span>())</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>pairwise_ci</span></code></pre></div>
+<pre><code>## 
+##   Simultaneous Confidence Intervals
+## 
+## Multiple Comparisons of Means: User-defined Contrasts
+## 
+## 
+## Fit: aov(formula = weight_loss ~ Diet, data = diet)
+## 
+## Quantile = 1.993
+## 95% confidence level
+##  
+## 
+## Linear Hypotheses:
+##            Estimate lwr     upr    
+## 2 - 1 == 0 -0.0320  -1.3824  1.3184
+## 3 - 1 == 0  1.8481   0.5224  3.1739
+## 3 - 2 == 0  1.8801   0.5686  3.1917</code></pre>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(pairwise_ci, <span class="at">xlab =</span> <span class="st">&quot;Weight loss diff&quot;</span>)</span></code></pre></div>
+<p><img src="anova_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+</div>
+<div id="bonferroni-correction" class="section level5">
+<h5>Bonferroni Correction</h5>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(pairwise_res, <span class="at">test =</span> <span class="fu">adjusted</span>(<span class="at">type =</span> <span class="st">&#39;bonf&#39;</span>))</span></code></pre></div>
+<pre><code>## 
+##   Simultaneous Tests for General Linear Hypotheses
+## 
+## Multiple Comparisons of Means: User-defined Contrasts
+## 
+## 
+## Fit: aov(formula = weight_loss ~ Diet, data = diet)
+## 
+## Linear Hypotheses:
+##            Estimate Std. Error t value Pr(&gt;|t|)  
+## 2 - 1 == 0  -0.0320     0.6776  -0.047   1.0000  
+## 3 - 1 == 0   1.8481     0.6652   2.778   0.0208 *
+## 3 - 2 == 0   1.8801     0.6581   2.857   0.0167 *
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## (Adjusted p values reported -- bonferroni method)</code></pre>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>alpha <span class="ot">=</span> <span class="fl">0.05</span> ; m <span class="ot">=</span> <span class="dv">3</span> </span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>pairwise_ci_bonferroni  <span class="ot">=</span>  <span class="fu">confint</span>(pairwise_res, <span class="at">level =</span> <span class="dv">1</span><span class="sc">-</span> (alpha<span class="sc">/</span>m) , <span class="at">calpha =</span> <span class="fu">univariate_calpha</span>())</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>pairwise_ci_bonferroni</span></code></pre></div>
+<pre><code>## 
+##   Simultaneous Confidence Intervals
+## 
+## Multiple Comparisons of Means: User-defined Contrasts
+## 
+## 
+## Fit: aov(formula = weight_loss ~ Diet, data = diet)
+## 
+## Quantile = 2.4504
+## 98.3333333333333% confidence level
+##  
+## 
+## Linear Hypotheses:
+##            Estimate lwr     upr    
+## 2 - 1 == 0 -0.0320  -1.6924  1.6284
+## 3 - 1 == 0  1.8481   0.2182  3.4781
+## 3 - 2 == 0  1.8801   0.2675  3.4928</code></pre>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(pairwise_ci_bonferroni)</span></code></pre></div>
+<p><img src="anova_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+</div>
+<div id="tukeys-method" class="section level5">
+<h5>Tukey’s Method</h5>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>pairwise_res_tukey <span class="ot">=</span> <span class="fu">glht</span>(diet.aov,  <span class="at">linfct =</span> <span class="fu">mcp</span>(<span class="at">Diet =</span> <span class="st">&quot;Tukey&quot;</span>))</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>pairwise_ci_tukey <span class="ot">=</span> <span class="fu">confint</span>(pairwise_res_tukey)</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>pairwise_ci_tukey</span></code></pre></div>
+<pre><code>## 
+##   Simultaneous Confidence Intervals
+## 
+## Multiple Comparisons of Means: Tukey Contrasts
+## 
+## 
+## Fit: aov(formula = weight_loss ~ Diet, data = diet)
+## 
+## Quantile = 2.394
+## 95% family-wise confidence level
+##  
+## 
+## Linear Hypotheses:
+##            Estimate lwr     upr    
+## 2 - 1 == 0 -0.0320  -1.6541  1.5901
+## 3 - 1 == 0  1.8481   0.2557  3.4406
+## 3 - 2 == 0  1.8801   0.3047  3.4556</code></pre>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(pairwise_ci_tukey, <span class="at">xlab =</span> <span class="st">&quot;Weight loss diff&quot;</span>)</span></code></pre></div>
+<p><img src="anova_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+</div>
+</div>
+<div id="multiple-comparisons" class="section level4">
+<h4>Multiple Comparisons</h4>
+<div id="prespecified-comparison" class="section level5">
+<h5>Prespecified Comparison</h5>
+<p><span style="color: red;">Any Other Idea???</span></p>
+<p><span class="math display">\[
+H_0: \frac{\alpha_1+\alpha_2}{2}-\alpha_3=0 \leftrightarrow  \frac{\mu_1 + \mu_2}{2} - \mu_3 = 0 
+\]</span></p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>contr1 <span class="ot">=</span> (<span class="fu">c</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>,<span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>,<span class="sc">-</span><span class="dv">1</span>))</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>glht_test <span class="ot">=</span> <span class="fu">glht</span>(diet.aov,  <span class="at">linfct =</span> <span class="fu">mcp</span>(<span class="at">Diet =</span> contr1))</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(glht_test)</span></code></pre></div>
+<pre><code>## 
+##   Simultaneous Tests for General Linear Hypotheses
+## 
+## Multiple Comparisons of Means: User-defined Contrasts
+## 
+## 
+## Fit: aov(formula = weight_loss ~ Diet, data = diet)
+## 
+## Linear Hypotheses:
+##        Estimate Std. Error t value Pr(&gt;|t|)   
+## 1 == 0  -1.8641     0.5683   -3.28  0.00159 **
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## (Adjusted p values reported -- single-step method)</code></pre>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># other option:</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>lvls <span class="ot">=</span> <span class="fu">data.frame</span>(<span class="at">diet_type =</span> <span class="fu">unique</span>(diet<span class="sc">$</span>Diet))</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>X <span class="ot">=</span> <span class="fu">model.matrix</span>(<span class="sc">~</span> diet_type  , <span class="at">data =</span> lvls)</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>( <span class="fu">glht</span>(diet.aov,  <span class="at">linfct =</span> contr1 <span class="sc">%*%</span> X ))</span></code></pre></div>
+<pre><code>## 
+##   Simultaneous Tests for General Linear Hypotheses
+## 
+## Fit: aov(formula = weight_loss ~ Diet, data = diet)
+## 
+## Linear Hypotheses:
+##        Estimate Std. Error t value Pr(&gt;|t|)   
+## 1 == 0  -1.8641     0.5683   -3.28  0.00159 **
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## (Adjusted p values reported -- single-step method)</code></pre>
+</div>
+<div id="scheffe-method" class="section level5">
+<h5>Scheffe Method</h5>
+<p><span style="color: red;">Any Other Idea???</span></p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DescTools)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ScheffeTest</span>(diet.aov , <span class="at">contrasts =</span> contr1, </span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">conf.level =</span> <span class="fl">0.95</span>) </span></code></pre></div>
+<pre><code>## 
+##   Posthoc multiple comparisons of means: Scheffe Test 
+##     95% family-wise confidence level
+## 
+## $Diet
+##            diff   lwr.ci     upr.ci   pval    
+## 1,2-3 -1.864148 -3.28432 -0.4439765 0.0066 ** 
+## 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div id="two-way-anova" class="section level2">
+<h2>Two-way ANOVA</h2>
+<p><strong>Effect of diet and gender on weight lost</strong></p>
+<p>Gender:<br />
+1- male, 0 - female</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>diet<span class="sc">$</span>gender <span class="ot">=</span> <span class="fu">factor</span>(diet<span class="sc">$</span>gender)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> diet, <span class="fu">aes</span>(<span class="at">x=</span>Diet, <span class="at">y=</span> weight_loss, <span class="at">color=</span>gender)) <span class="sc">+</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">outlier.colour=</span><span class="st">&quot;red&quot;</span>, <span class="at">outlier.shape=</span><span class="dv">8</span>,<span class="at">outlier.size=</span><span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">&quot;Diet Type&quot;</span>, <span class="at">y=</span> <span class="st">&quot;Weight Loss&quot;</span>) <span class="sc">+</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_discrete</span>(<span class="at">name =</span> <span class="st">&quot;Gender&quot;</span>, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;Female&quot;</span>, <span class="st">&quot;Male&quot;</span>))</span></code></pre></div>
+<p><img src="anova_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>diet.aov2 <span class="ot">=</span> <span class="fu">aov</span>( weight_loss<span class="sc">~</span>Diet <span class="sc">+</span> gender ,<span class="at">data=</span>diet)</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(diet.aov2) </span></code></pre></div>
+<pre><code>##             Df Sum Sq Mean Sq F value  Pr(&gt;F)   
+## Diet         2   60.5  30.264   5.312 0.00705 **
+## gender       1    0.2   0.169   0.030 0.86387   
+## Residuals   72  410.2   5.698                   
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(diet.aov2)</span></code></pre></div>
+<p><img src="anova_files/figure-html/unnamed-chunk-19-1.png" width="672" /><img src="anova_files/figure-html/unnamed-chunk-19-2.png" width="672" /><img src="anova_files/figure-html/unnamed-chunk-19-3.png" width="672" /><img src="anova_files/figure-html/unnamed-chunk-19-4.png" width="672" /></p>
+</div>
+<div id="intercations" class="section level2">
+<h2>Intercations</h2>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>diet.aov2_intr <span class="ot">=</span> <span class="fu">aov</span>( weight_loss<span class="sc">~</span>Diet <span class="sc">*</span> gender ,<span class="at">data=</span>diet)</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(diet.aov2_intr) </span></code></pre></div>
+<pre><code>##             Df Sum Sq Mean Sq F value  Pr(&gt;F)   
+## Diet         2   60.5  30.264   5.629 0.00541 **
+## gender       1    0.2   0.169   0.031 0.85991   
+## Diet:gender  2   33.9  16.952   3.153 0.04884 * 
+## Residuals   70  376.3   5.376                   
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p><strong>Interaction Plot</strong></p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">interaction.plot</span>(<span class="at">x.factor =</span> diet<span class="sc">$</span>Diet,</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">trace.factor =</span> diet<span class="sc">$</span>gender, </span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">response =</span> diet<span class="sc">$</span>weight_loss,</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fun =</span> mean, </span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">type =</span> <span class="st">&quot;b&quot;</span>, <span class="at">legend =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>                 <span class="at">xlab =</span> <span class="st">&quot;Diet&quot;</span>, <span class="at">ylab=</span><span class="st">&quot;Weight Loss&quot;</span>,</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>                 <span class="at">trace.label =</span> <span class="st">&quot;Gender&quot;</span>,</span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>                 <span class="at">pch=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">8</span>), <span class="at">col =</span> <span class="fu">c</span>(<span class="st">&quot;#FF6347&quot;</span>, <span class="st">&quot;#3CB371&quot;</span>))</span></code></pre></div>
+<p><img src="anova_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(diet.aov2_intr)</span></code></pre></div>
+<p><img src="anova_files/figure-html/unnamed-chunk-22-1.png" width="672" /><img src="anova_files/figure-html/unnamed-chunk-22-2.png" width="672" /><img src="anova_files/figure-html/unnamed-chunk-22-3.png" width="672" /><img src="anova_files/figure-html/unnamed-chunk-22-4.png" width="672" /></p>
+</div>
+</div>
+<div id="interaction-plots-examples" class="section level1">
+<h1>Interaction Plots Examples</h1>
+<p><strong>Invented example:</strong><br />
+Ranking of movies from different genres by women and men.</p>
+<div id="no-interaction" class="section level2">
+<h2>No interaction</h2>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">22</span>)</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>group <span class="ot">&lt;-</span> <span class="fu">gl</span>(<span class="at">n =</span> <span class="dv">2</span>, <span class="at">k =</span> <span class="dv">20</span>, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;Female&quot;</span>,<span class="st">&quot;Male&quot;</span>))</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>trt <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">&quot;Adventure&quot;</span>,<span class="st">&quot;Comedy&quot;</span>), <span class="at">each=</span><span class="dv">10</span>),<span class="dv">2</span>)</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>resp <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">20</span>, <span class="at">mean =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="fl">3.60</span>,<span class="fl">3.65</span>), <span class="at">each =</span> <span class="dv">10</span>), <span class="at">sd =</span> .<span class="dv">01</span>),</span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">20</span>, <span class="at">mean =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="fl">3.62</span>,<span class="fl">3.67</span>), <span class="at">each =</span> <span class="dv">10</span>), <span class="at">sd =</span> .<span class="dv">01</span>)</span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a>df1 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(group, trt, resp)</span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a><span class="fu">interaction.plot</span>(<span class="at">x.factor =</span> df1<span class="sc">$</span>trt, </span>
+<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a>                 <span class="at">trace.factor =</span> df1<span class="sc">$</span>group,</span>
+<span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a>                 <span class="at">response =</span> df1<span class="sc">$</span>resp,</span>
+<span id="cb44-16"><a href="#cb44-16" aria-hidden="true" tabindex="-1"></a>                 <span class="at">type =</span> <span class="st">&quot;b&quot;</span>, <span class="at">legend =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb44-17"><a href="#cb44-17" aria-hidden="true" tabindex="-1"></a>                 <span class="at">xlab =</span> <span class="st">&quot;Genre&quot;</span>, <span class="at">ylab=</span><span class="st">&quot;Movie Rating&quot;</span>,</span>
+<span id="cb44-18"><a href="#cb44-18" aria-hidden="true" tabindex="-1"></a>                 <span class="at">trace.label =</span> <span class="st">&quot;Gender&quot;</span>,</span>
+<span id="cb44-19"><a href="#cb44-19" aria-hidden="true" tabindex="-1"></a>                 <span class="at">pch=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">8</span>), <span class="at">col =</span> <span class="fu">c</span>(<span class="st">&quot;#FF6347&quot;</span>, <span class="st">&quot;#3CB371&quot;</span>) )</span></code></pre></div>
+<p><img src="anova_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+</div>
+<div id="with-interaction" class="section level2">
+<h2>with interaction</h2>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">22</span>)</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>group <span class="ot">&lt;-</span> <span class="fu">gl</span>(<span class="at">n =</span> <span class="dv">2</span>, <span class="at">k =</span> <span class="dv">20</span>, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;Female&quot;</span>,<span class="st">&quot;Male&quot;</span>))</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>trt <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">&quot;Sci-fi&quot;</span>,<span class="st">&quot;Romance&quot;</span>), <span class="at">each=</span><span class="dv">10</span>),<span class="dv">2</span>)</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>resp <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">20</span>, <span class="at">mean =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="fl">3.60</span>,<span class="fl">3.65</span>), <span class="at">each =</span> <span class="dv">10</span>),  <span class="at">sd =</span> .<span class="dv">01</span>),</span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">20</span>, <span class="at">mean =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="fl">3.65</span>,<span class="fl">3.60</span>), <span class="at">each =</span> <span class="dv">10</span>),  <span class="at">sd =</span> .<span class="dv">01</span>)</span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>df2 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(group, trt, resp)</span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a><span class="fu">interaction.plot</span>(<span class="at">x.factor =</span> df2<span class="sc">$</span>trt, </span>
+<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a>                 <span class="at">trace.factor =</span> df2<span class="sc">$</span>group,</span>
+<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a>                 <span class="at">response =</span> df2<span class="sc">$</span>resp,</span>
+<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a>                 <span class="at">type =</span> <span class="st">&quot;b&quot;</span>, <span class="at">legend =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a>                 <span class="at">xlab =</span> <span class="st">&quot;Genre&quot;</span>, <span class="at">ylab=</span><span class="st">&quot;Movie Rating&quot;</span>,</span>
+<span id="cb45-16"><a href="#cb45-16" aria-hidden="true" tabindex="-1"></a>                 <span class="at">trace.label =</span> <span class="st">&quot;Gender&quot;</span>,</span>
+<span id="cb45-17"><a href="#cb45-17" aria-hidden="true" tabindex="-1"></a>                 <span class="at">pch=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">8</span>), <span class="at">col =</span> <span class="fu">c</span>(<span class="st">&quot;#FF6347&quot;</span>, <span class="st">&quot;#3CB371&quot;</span>) )</span></code></pre></div>
+<p><img src="anova_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">22</span>)</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>trt <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">&quot;Romantic Comedy&quot;</span>, <span class="st">&quot;Musicals&quot;</span>), <span class="at">each=</span><span class="dv">10</span>),<span class="dv">2</span>)</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>resp <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">20</span>, <span class="at">mean =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="fl">3.25</span>,<span class="fl">3.17</span>), <span class="at">each =</span> <span class="dv">10</span>),  <span class="at">sd =</span> .<span class="dv">01</span>),</span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">20</span>, <span class="at">mean =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="fl">3.10</span>,<span class="fl">3.13</span>), <span class="at">each =</span> <span class="dv">10</span>),  <span class="at">sd =</span> .<span class="dv">01</span>)</span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>df3 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(group, trt, resp)</span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a><span class="fu">interaction.plot</span>(<span class="at">x.factor =</span> df3<span class="sc">$</span>trt, </span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>                 <span class="at">trace.factor =</span> df3<span class="sc">$</span>group,</span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>                 <span class="at">response =</span> df3<span class="sc">$</span>resp,</span>
+<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>                 <span class="at">type =</span> <span class="st">&quot;b&quot;</span>, <span class="at">legend =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a>                 <span class="at">xlab =</span> <span class="st">&quot;Genre&quot;</span>, <span class="at">ylab=</span><span class="st">&quot;Movie Rating&quot;</span>,</span>
+<span id="cb46-15"><a href="#cb46-15" aria-hidden="true" tabindex="-1"></a>                 <span class="at">trace.label =</span> <span class="st">&quot;Gender&quot;</span>,</span>
+<span id="cb46-16"><a href="#cb46-16" aria-hidden="true" tabindex="-1"></a>                 <span class="at">pch=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">8</span>), <span class="at">col =</span> <span class="fu">c</span>(<span class="st">&quot;#FF6347&quot;</span>, <span class="st">&quot;#3CB371&quot;</span>) )</span></code></pre></div>
+<p><img src="anova_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
+</div>
+</div>
+<div id="ricci-firefighter-promotion-exam-scores-dataset" class="section level1">
+<h1>Ricci: Firefighter Promotion Exam Scores Dataset</h1>
+<p><strong>Details</strong></p>
+<p>The city of New Haven, Connecticut administered exams (both written and oral) in November and December of 2003 to firefighters hoping to qualify for promotion to either Lieutenant or Captain in the city fire department. A final score consisting of a 60% weight for the written exam and a 40% weight for the oral exam was computed for each person who took the exam. For each person who took the exams, there are measurements on their race (black, white, or Hispanic), which position they were trying for (Lieutenant, Captain), scores on the oral and written exams, and the combined score. These data were used as part of a court case (Ricci v.DeStefano) dealing with racial discrimination</p>
+<p><strong>Source</strong></p>
+<p>An article on using these data: Miao, W. (2011) “Did the Results of Promotion Exams Have a Disparate Impact on Minorities? Using Statistical Evidence in Ricci v. DeStefano,” JSE 19:1 at <a href="http://jse.amstat.org/v18n3/miao.pdf">link</a></p>
+<p><strong>Format</strong></p>
+<ul>
+<li><code>Race</code>: Race of firefighter (B=black, H=Hispanic, or W=white)</li>
+<li><code>Position</code>: Promotion desired (Captain or Lieutenant)</li>
+<li><code>Oral</code>: Oral exam score</li>
+<li><code>Written</code>: Written exam score</li>
+<li><code>Combine</code>: Combined score (written exam gets 60% weight)</li>
+</ul>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Stat2Data)</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(Ricci)</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(Ricci)</span></code></pre></div>
+<pre><code>## Observations: 118
+## Variables: 5
+## $ Race     &lt;fct&gt; W, W, W, W, W, H, W, H, W, W, W, W, H, W, W, B, W, W, B, W...
+## $ Position &lt;fct&gt; Captain, Captain, Captain, Captain, Captain, Captain, Capt...
+## $ Oral     &lt;dbl&gt; 89.52, 80.00, 82.38, 88.57, 76.19, 76.19, 76.19, 70.00, 73...
+## $ Written  &lt;int&gt; 95, 95, 87, 76, 84, 82, 82, 84, 81, 72, 69, 74, 74, 77, 74...
+## $ Combine  &lt;dbl&gt; 92.808, 89.000, 85.152, 81.028, 80.876, 79.676, 79.676, 78...</code></pre>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> Ricci, </span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x=</span>Race, <span class="at">y=</span> Combine, <span class="at">color=</span>Position)) <span class="sc">+</span></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">outlier.colour=</span><span class="st">&quot;red&quot;</span>, <span class="at">outlier.shape=</span><span class="dv">8</span>,<span class="at">outlier.size=</span><span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">&quot;Race&quot;</span>, <span class="at">y=</span> <span class="st">&quot;Combined score&quot;</span>) </span></code></pre></div>
+<p><img src="anova_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
+<div id="one-way-anova-1" class="section level2">
+<h2>One-way ANOVA</h2>
+<div id="option-1" class="section level3">
+<h3>Option 1</h3>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>aov_captain <span class="ot">=</span> <span class="fu">aov</span>(Combine  <span class="sc">~</span> Race , <span class="at">data =</span> Ricci <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Position <span class="sc">==</span> <span class="st">&quot;Captain&quot;</span>))</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(aov_captain)</span></code></pre></div>
+<pre><code>##             Df Sum Sq Mean Sq F value Pr(&gt;F)  
+## Race         2  707.2   353.6   5.034 0.0115 *
+## Residuals   38 2669.1    70.2                 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<div id="tukes-95-cis" class="section level4">
+<h4>Tuke’s 95% CI’s</h4>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>ricci_capt_tukey <span class="ot">=</span> <span class="fu">glht</span>(aov_captain,  <span class="at">linfct =</span> <span class="fu">mcp</span>(<span class="at">Race =</span> <span class="st">&quot;Tukey&quot;</span>))</span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>ricci_capt_ci_tukey <span class="ot">=</span> <span class="fu">confint</span>(ricci_capt_tukey)</span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>ricci_capt_ci_tukey</span></code></pre></div>
+<pre><code>## 
+##   Simultaneous Confidence Intervals
+## 
+## Multiple Comparisons of Means: Tukey Contrasts
+## 
+## 
+## Fit: aov(formula = Combine ~ Race, data = Ricci %&gt;% filter(Position == 
+##     &quot;Captain&quot;))
+## 
+## Quantile = 2.4304
+## 95% family-wise confidence level
+##  
+## 
+## Linear Hypotheses:
+##            Estimate lwr     upr    
+## H - B == 0  4.7645  -5.4200 14.9490
+## W - B == 0 10.3308   2.0569 18.6047
+## W - H == 0  5.5663  -2.7076 13.8402</code></pre>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ricci_capt_ci_tukey, <span class="at">xlab =</span> <span class="st">&quot;score diff&quot;</span>)</span></code></pre></div>
+<p><img src="anova_files/figure-html/unnamed-chunk-30-1.png" width="672" /></p>
+</div>
+</div>
+<div id="option-2" class="section level3">
+<h3>Option 2</h3>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>aov_lieutenant <span class="ot">=</span> <span class="fu">aov</span>(Combine  <span class="sc">~</span> Race , <span class="at">data =</span> Ricci <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Position <span class="sc">==</span> <span class="st">&quot;Lieutenant&quot;</span>))</span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(aov_lieutenant)</span></code></pre></div>
+<pre><code>##             Df Sum Sq Mean Sq F value   Pr(&gt;F)    
+## Race         2   1266   633.2   8.579 0.000446 ***
+## Residuals   74   5462    73.8                     
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>ricci_lie_tukey <span class="ot">=</span> <span class="fu">glht</span>(aov_lieutenant,  <span class="at">linfct =</span> <span class="fu">mcp</span>(<span class="at">Race =</span> <span class="st">&quot;Tukey&quot;</span>))</span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a>ricci_lie_ci_tukey <span class="ot">=</span> <span class="fu">confint</span>(ricci_lie_tukey)</span>
+<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a>ricci_lie_ci_tukey</span></code></pre></div>
+<pre><code>## 
+##   Simultaneous Confidence Intervals
+## 
+## Multiple Comparisons of Means: Tukey Contrasts
+## 
+## 
+## Fit: aov(formula = Combine ~ Race, data = Ricci %&gt;% filter(Position == 
+##     &quot;Lieutenant&quot;))
+## 
+## Quantile = 2.3854
+## 95% family-wise confidence level
+##  
+## 
+## Linear Hypotheses:
+##            Estimate lwr      upr     
+## H - B == 0 -0.09273 -7.17116  6.98570
+## W - B == 0  8.12599  2.48046 13.77152
+## W - H == 0  8.21872  2.07327 14.36418</code></pre>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ricci_lie_ci_tukey, <span class="at">xlab =</span> <span class="st">&quot;score diff&quot;</span>)</span></code></pre></div>
+<p><img src="anova_files/figure-html/unnamed-chunk-33-1.png" width="672" /></p>
+</div>
+</div>
+<div id="two-way-anova-1" class="section level2">
+<h2>Two-way ANOVA</h2>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">aov</span>(Combine  <span class="sc">~</span> Race<span class="sc">*</span>Position , <span class="at">data =</span> Ricci))</span></code></pre></div>
+<pre><code>##                Df Sum Sq Mean Sq F value   Pr(&gt;F)    
+## Race            2   1972   985.8  13.579 5.25e-06 ***
+## Position        1    144   143.9   1.981    0.162    
+## Race:Position   2     64    32.0   0.441    0.645    
+## Residuals     112   8131    72.6                     
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="co"># interaction plot </span></span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a><span class="fu">interaction.plot</span>(<span class="at">x.factor =</span> Ricci<span class="sc">$</span>Race,</span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">trace.factor =</span> Ricci<span class="sc">$</span>Position, </span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">response =</span> Ricci<span class="sc">$</span>Combine,</span>
+<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fun =</span> mean, </span>
+<span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a>                 <span class="at">type =</span> <span class="st">&quot;b&quot;</span>, <span class="at">legend =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb62-7"><a href="#cb62-7" aria-hidden="true" tabindex="-1"></a>                 <span class="at">xlab =</span> <span class="st">&quot;Race&quot;</span>, <span class="at">ylab=</span><span class="st">&quot;Combine Score&quot;</span>,</span>
+<span id="cb62-8"><a href="#cb62-8" aria-hidden="true" tabindex="-1"></a>                 <span class="at">trace.label =</span> <span class="st">&quot;Position&quot;</span>,</span>
+<span id="cb62-9"><a href="#cb62-9" aria-hidden="true" tabindex="-1"></a>                 <span class="at">pch=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">8</span>), <span class="at">col =</span> <span class="fu">c</span>(<span class="st">&quot;#FF6347&quot;</span>, <span class="st">&quot;#3CB371&quot;</span>))</span></code></pre></div>
+<p><img src="anova_files/figure-html/unnamed-chunk-35-1.png" width="672" /></p>
+<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">interaction.plot</span>(<span class="at">x.factor =</span> Ricci<span class="sc">$</span>Position,</span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">trace.factor =</span> Ricci<span class="sc">$</span>Race, </span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">response =</span> Ricci<span class="sc">$</span>Combine,</span>
+<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fun =</span> mean, </span>
+<span id="cb63-5"><a href="#cb63-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">type =</span> <span class="st">&quot;b&quot;</span>, <span class="at">legend =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb63-6"><a href="#cb63-6" aria-hidden="true" tabindex="-1"></a>                 <span class="at">xlab =</span> <span class="st">&quot;Position&quot;</span>, <span class="at">ylab=</span><span class="st">&quot;Combine Score&quot;</span>,</span>
+<span id="cb63-7"><a href="#cb63-7" aria-hidden="true" tabindex="-1"></a>                 <span class="at">trace.label =</span> <span class="st">&quot;Race&quot;</span>,</span>
+<span id="cb63-8"><a href="#cb63-8" aria-hidden="true" tabindex="-1"></a>                 <span class="at">pch=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">8</span>, <span class="dv">3</span>), <span class="at">col =</span> <span class="fu">c</span>(<span class="st">&quot;#FF6347&quot;</span>, <span class="st">&quot;#3CB371&quot;</span>,<span class="st">&quot;#2980B9&quot;</span> ))</span></code></pre></div>
+<p><img src="anova_files/figure-html/unnamed-chunk-36-1.png" width="672" /></p>
+</div>
+</div>
+<div id="one-factor-at-a-time" class="section level1">
+<h1>One-factor-at-a-time</h1>
+<p>Example:</p>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>res_s <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">13</span>, <span class="dv">24</span>, <span class="dv">18</span>, <span class="dv">16</span> ,<span class="dv">14</span>, <span class="dv">27</span>, <span class="dv">30</span>, <span class="dv">14</span>, <span class="dv">14</span>)</span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>df <span class="ot">=</span> <span class="fu">cbind</span>(<span class="fu">expand.grid</span>(<span class="at">Treatment_1 =</span> <span class="fu">c</span>(<span class="st">&quot;none&quot;</span>, <span class="st">&quot;low&quot;</span>, <span class="st">&quot;high&quot;</span>),</span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">Treatment_2 =</span> <span class="fu">c</span>(<span class="st">&quot;none&quot;</span>, <span class="st">&quot;low&quot;</span>, <span class="st">&quot;high&quot;</span>)), <span class="at">y_exp =</span>res_s)</span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> df, <span class="fu">aes</span>(<span class="at">x=</span>Treatment_1, <span class="at">y =</span> Treatment_2, <span class="at">size =</span> y_exp, <span class="at">color =</span> <span class="fu">factor</span>(y_exp))) <span class="sc">+</span></span>
+<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">scale_size</span>(<span class="at">guide =</span> <span class="st">&quot;none&quot;</span>) <span class="sc">+</span>  <span class="fu">guides</span>(<span class="at">color=</span><span class="fu">guide_legend</span>(<span class="at">title=</span><span class="st">&quot;E[Y]&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb64-6"><a href="#cb64-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span> <span class="st">&quot;Treatment 1&quot;</span>, <span class="at">y=</span> <span class="st">&quot;Treatment 2&quot;</span>) <span class="sc">+</span> <span class="fu">theme_bw</span>() </span></code></pre></div>
+<p><img src="anova_files/figure-html/unnamed-chunk-37-1.png" width="672" /></p>
+</div>
+<div id="mixed-effect-model" class="section level1">
+<h1>Mixed Effect Model</h1>
+<div id="positive-negative-feedback" class="section level2">
+<h2>Positive Negative Feedback</h2>
+<p><strong>The effects of positive and negative verbal feedback on repeated force production</strong></p>
+<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>pos_neg_df <span class="ot">=</span> <span class="fu">read.csv</span>(<span class="st">&quot;datasets/pos_neg_feedback.csv&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(pos_neg_df)</span></code></pre></div>
+<pre><code>## Observations: 22
+## Variables: 40
+## $ gender &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, ...
+## $ neg1   &lt;dbl&gt; 92.38054, 90.20690, 88.86179, 62.48928, 88.26729, 97.04653, ...
+## $ neg2   &lt;dbl&gt; 93.15540, 84.82759, 97.64228, 86.00859, 91.29759, 102.47980,...
+## $ neg3   &lt;dbl&gt; 93.58588, 84.62069, 91.30081, 78.62662, 91.37529, 112.76121,...
+## $ neg4   &lt;dbl&gt; 90.48644, 83.31035, 92.11382, 83.69100, 88.18959, 100.64085,...
+## $ neg5   &lt;dbl&gt; 87.12871, 77.58621, 96.74797, 79.57083, 91.91919, 101.97827,...
+## $ neg6   &lt;dbl&gt; 90.22815, 78.89655, 95.52846, 75.53649, 91.53069, 103.73363,...
+## $ neg7   &lt;dbl&gt; 84.28756, 76.68966, 84.47154, 92.87555, 95.02720, 104.56952,...
+## $ neg8   &lt;dbl&gt; 84.28756, 76.75862, 82.68293, 103.26182, 86.94639, 93.03427,...
+## $ neg9   &lt;dbl&gt; 87.64529, 77.31035, 80.81301, 103.43349, 86.86869, 92.86710,...
+## $ neg10  &lt;dbl&gt; 81.18812, 76.34483, 89.67480, 101.63091, 85.47009, 81.66620,...
+## $ neg11  &lt;dbl&gt; 77.91649, 76.62069, 77.39837, 79.91417, 83.52758, 73.14015, ...
+## $ neg12  &lt;dbl&gt; 79.81059, 78.00000, 78.94309, 76.39486, 88.42269, 83.50515, ...
+## $ pos1   &lt;dbl&gt; 105.38448, 78.77009, 92.34828, 96.20753, 91.22363, 82.05591,...
+## $ pos2   &lt;dbl&gt; 105.20510, 82.52105, 86.09122, 100.66748, 91.05485, 72.79832...
+## $ pos3   &lt;dbl&gt; 100.54128, 74.94259, 91.21749, 93.75000, 87.25739, 80.25248,...
+## $ pos4   &lt;dbl&gt; 98.20937, 78.61700, 86.24199, 84.73908, 85.99156, 74.36129, ...
+## $ pos5   &lt;dbl&gt; 97.13310, 80.83695, 91.06671, 88.46364, 79.57806, 71.35557, ...
+## $ pos6   &lt;dbl&gt; 97.04341, 78.38735, 87.90049, 86.19539, 79.66245, 71.66093, ...
+## $ pos7   &lt;dbl&gt; 88.61265, 70.42613, 80.06031, 98.39199, 80.50633, 68.95101, ...
+## $ pos8   &lt;dbl&gt; 88.07451, 73.33503, 72.52167, 92.38471, 79.40928, 69.07124, ...
+## $ pos9   &lt;dbl&gt; 88.16421, 67.21102, 77.57256, 99.75728, 78.14346, 70.33363, ...
+## $ pos10  &lt;dbl&gt; 78.74687, 68.20617, 69.58160, 92.83981, 75.02110, 66.90712, ...
+## $ pos11  &lt;dbl&gt; 84.21789, 69.12478, 79.15567, 97.39078, 74.09283, 66.18575, ...
+## $ pos12  &lt;dbl&gt; 85.56323, 63.30697, 75.38636, 82.28155, 73.08017, 65.58461, ...
+## $ con1   &lt;dbl&gt; 91.01424, 88.45564, 94.08738, 67.36760, 99.31319, 90.01440, ...
+## $ con2   &lt;dbl&gt; 89.76870, 90.03286, 85.59922, 68.92523, 97.25275, 90.73452, ...
+## $ con3   &lt;dbl&gt; 87.72243, 87.40416, 88.82109, 61.99377, 91.31868, 75.61210, ...
+## $ con4   &lt;dbl&gt; 87.01069, 83.65827, 85.89212, 54.82866, 88.18681, 88.57417, ...
+## $ con5   &lt;dbl&gt; 86.03204, 83.13253, 81.20576, 48.67601, 82.08791, 84.75756, ...
+## $ con6   &lt;dbl&gt; 75.97866, 79.51807, 75.49426, 59.73520, 82.00549, 80.58089, ...
+## $ con7   &lt;dbl&gt; 82.82919, 81.75247, 74.17623, 58.25545, 80.19231, 81.51704, ...
+## $ con8   &lt;dbl&gt; 81.04983, 81.81818, 74.61557, 47.04050, 81.84133, 74.31589, ...
+## $ con9   &lt;dbl&gt; 73.93239, 81.29244, 79.22871, 50.23365, 77.88462, 77.62842, ...
+## $ con10  &lt;dbl&gt; 78.02492, 80.66247, 77.98389, 42.44548, 81.18132, 82.38118, ...
+## $ con11  &lt;dbl&gt; 73.30962, 80.50384, 70.44179, 54.20561, 75.57692, 68.26692, ...
+## $ con12  &lt;dbl&gt; 62.54449, 79.12377, 63.70222, 55.84112, 77.14286, 75.46807, ...
+## $ negall &lt;dbl&gt; 86.11279, 78.56552, 86.14634, 86.88413, 89.74359, 97.06325, ...
+## $ posall &lt;dbl&gt; 91.73383, 72.50829, 83.81455, 95.55074, 79.91561, 71.41569, ...
+## $ conall &lt;dbl&gt; 80.76513, 82.81709, 78.77471, 54.67290, 81.41209, 77.55641, ...</code></pre>
+<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>neg_long <span class="ot">=</span> pos_neg_df <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="st">&quot;id&quot;</span><span class="ot">=</span> <span class="fu">row_number</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>( neg1<span class="sc">:</span>neg12, id, gender) <span class="sc">%&gt;%</span> </span>
+<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> neg1<span class="sc">:</span>neg12, <span class="at">values_to =</span> <span class="st">&quot;performance&quot;</span>, <span class="at">names_to =</span> <span class="st">&quot;time&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_at</span>(<span class="st">&quot;time&quot;</span>, <span class="sc">~</span>(<span class="fu">str_extract</span>(., <span class="at">pattern =</span> <span class="st">&quot;[0-9]+&quot;</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">feedback =</span> <span class="st">&quot;negative&quot;</span>)</span>
+<span id="cb68-6"><a href="#cb68-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb68-7"><a href="#cb68-7" aria-hidden="true" tabindex="-1"></a>pos_long <span class="ot">=</span>  pos_neg_df <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="st">&quot;id&quot;</span><span class="ot">=</span> <span class="fu">row_number</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb68-8"><a href="#cb68-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>( pos1<span class="sc">:</span>pos12, id, gender) <span class="sc">%&gt;%</span> </span>
+<span id="cb68-9"><a href="#cb68-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> pos1<span class="sc">:</span>pos12, <span class="at">values_to =</span> <span class="st">&quot;performance&quot;</span>, <span class="at">names_to =</span> <span class="st">&quot;time&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb68-10"><a href="#cb68-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_at</span>(<span class="st">&quot;time&quot;</span>, <span class="sc">~</span>(<span class="fu">str_extract</span>(., <span class="at">pattern =</span> <span class="st">&quot;[0-9]+&quot;</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb68-11"><a href="#cb68-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">feedback =</span> <span class="st">&quot;positive&quot;</span>)</span>
+<span id="cb68-12"><a href="#cb68-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb68-13"><a href="#cb68-13" aria-hidden="true" tabindex="-1"></a>con_long <span class="ot">=</span>  pos_neg_df <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="st">&quot;id&quot;</span><span class="ot">=</span> <span class="fu">row_number</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb68-14"><a href="#cb68-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>( con1<span class="sc">:</span>con12, id, gender) <span class="sc">%&gt;%</span> </span>
+<span id="cb68-15"><a href="#cb68-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> con1<span class="sc">:</span>con12, <span class="at">values_to =</span> <span class="st">&quot;performance&quot;</span>, <span class="at">names_to =</span> <span class="st">&quot;time&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb68-16"><a href="#cb68-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_at</span>(<span class="st">&quot;time&quot;</span>, <span class="sc">~</span>(<span class="fu">str_extract</span>(., <span class="at">pattern =</span> <span class="st">&quot;[0-9]+&quot;</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb68-17"><a href="#cb68-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">feedback =</span> <span class="st">&quot;no feedback&quot;</span>)</span>
+<span id="cb68-18"><a href="#cb68-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb68-19"><a href="#cb68-19" aria-hidden="true" tabindex="-1"></a>feedback_long_df <span class="ot">=</span> neg_long <span class="sc">%&gt;%</span> <span class="fu">bind_rows</span>(pos_long) <span class="sc">%&gt;%</span> <span class="fu">bind_rows</span>(con_long)</span>
+<span id="cb68-20"><a href="#cb68-20" aria-hidden="true" tabindex="-1"></a><span class="co"># write_csv(feedback_long_df, &quot;datasets/feedback_long_df.csv&quot;)</span></span></code></pre></div>
+<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>feedback_long_df <span class="ot">=</span> <span class="fu">read_csv</span>(<span class="st">&quot;datasets/feedback_long_df.csv&quot;</span>)</span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(feedback_long_df)</span></code></pre></div>
+<pre><code>## # A tibble: 6 x 5
+##      id gender  time performance feedback
+##   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt; &lt;chr&gt;   
+## 1     1      1     1        92.4 negative
+## 2     1      1     2        93.2 negative
+## 3     1      1     3        93.6 negative
+## 4     1      1     4        90.5 negative
+## 5     1      1     5        87.1 negative
+## 6     1      1     6        90.2 negative</code></pre>
+<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a>feedback_long_df <span class="ot">=</span> feedback_long_df <span class="sc">%&gt;%</span> <span class="fu">mutate_at</span>(<span class="fu">vars</span>(id, gender, feedback), factor) <span class="sc">%&gt;%</span> <span class="fu">mutate_at</span>(<span class="st">&quot;time&quot;</span>,  as.integer)</span></code></pre></div>
+<p>let’s take a look:</p>
+<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>feedback_long_df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(id, feedback) <span class="sc">%&gt;%</span></span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_per =</span> <span class="fu">mean</span>(performance)) <span class="sc">%&gt;%</span></span>
+<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>feedback , <span class="at">y=</span>mean_per, <span class="at">color =</span> feedback)) <span class="sc">+</span></span>
+<span id="cb72-4"><a href="#cb72-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;&quot;</span>) <span class="sc">+</span></span>
+<span id="cb72-5"><a href="#cb72-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Boxplots of Average Relative Performance by Feedback&quot;</span> , <span class="at">y =</span> <span class="st">&quot;Average Relative Performance&quot;</span>)</span></code></pre></div>
+<p><img src="anova_files/figure-html/unnamed-chunk-43-1.png" width="672" /></p>
+<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>feedback_long_df <span class="sc">%&gt;%</span> </span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>feedback , <span class="at">y=</span>performance, <span class="at">color =</span> feedback)) <span class="sc">+</span></span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;&quot;</span>) <span class="sc">+</span></span>
+<span id="cb73-4"><a href="#cb73-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Boxplots of Relative Performance by Feedback&quot;</span> , <span class="at">y =</span> <span class="st">&quot;Relative Performance&quot;</span>)</span></code></pre></div>
+<p><img src="anova_files/figure-html/unnamed-chunk-44-1.png" width="672" /></p>
+<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>feedback_long_df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(id, feedback, gender) <span class="sc">%&gt;%</span></span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_per =</span> <span class="fu">mean</span>(performance)) <span class="sc">%&gt;%</span></span>
+<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>feedback , <span class="at">y=</span>mean_per, <span class="at">color =</span> gender)) <span class="sc">+</span></span>
+<span id="cb74-4"><a href="#cb74-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb74-5"><a href="#cb74-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Boxplots of Average Relative Performance by Feedback&quot;</span> , <span class="at">y =</span> <span class="st">&quot;Average Relative Performance&quot;</span>)</span></code></pre></div>
+<p><img src="anova_files/figure-html/unnamed-chunk-45-1.png" width="672" /></p>
+<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>feedback_long_df <span class="sc">%&gt;%</span> </span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>feedback , <span class="at">y=</span>performance, <span class="at">color =</span> gender)) <span class="sc">+</span></span>
+<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb75-4"><a href="#cb75-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Boxplots of  Relative Performance by Feedback&quot;</span> , <span class="at">y =</span> <span class="st">&quot; Relative Performance&quot;</span>)</span></code></pre></div>
+<p><img src="anova_files/figure-html/unnamed-chunk-46-1.png" width="672" /></p>
+<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="co"># feedback_long_df %&gt;% group_by(feedback, time) %&gt;% summarise(mean_perf = mean(performance) %&gt;%)</span></span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   ggplot(aes(x=factor(time) , y=performance, color = id, group = id)) +</span></span>
+<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   geom_point() + </span></span>
+<span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a><span class="co">#   geom_line() + </span></span>
+<span id="cb76-5"><a href="#cb76-5" aria-hidden="true" tabindex="-1"></a><span class="co">#   labs(title = &quot;Boxplots of Average Relative Performance by Feedback&quot; , y = &quot;Average Relative Performance&quot;)</span></span></code></pre></div>
+<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a>feedback_long_df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(feedback, time) <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="at">mean_perf =</span> <span class="fu">mean</span>(performance)) <span class="sc">%&gt;%</span></span>
+<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span><span class="fu">factor</span>(time) , <span class="at">y=</span>mean_perf, <span class="at">color =</span> feedback, <span class="at">group =</span> feedback)) <span class="sc">+</span></span>
+<span id="cb77-3"><a href="#cb77-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb77-4"><a href="#cb77-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">alpha=</span>.<span class="dv">5</span>, <span class="at">size =</span> <span class="fl">1.5</span>) <span class="sc">+</span> </span>
+<span id="cb77-5"><a href="#cb77-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Average Relative Performance by Feedback &amp; Time&quot;</span> ,</span>
+<span id="cb77-6"><a href="#cb77-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Repetitions&quot;</span> , <span class="at">y =</span> <span class="st">&quot;Average Relative Performance&quot;</span>)</span></code></pre></div>
+<p><img src="anova_files/figure-html/unnamed-chunk-48-1.png" width="672" /></p>
+<div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a>feedback_long_df <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(feedback, time, gender) <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="at">mean_perf =</span> <span class="fu">mean</span>(performance)) <span class="sc">%&gt;%</span></span>
+<span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span><span class="fu">factor</span>(time) , <span class="at">y=</span>mean_perf, <span class="at">color =</span> feedback, <span class="at">group =</span> feedback)) <span class="sc">+</span></span>
+<span id="cb78-3"><a href="#cb78-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb78-4"><a href="#cb78-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">alpha=</span>.<span class="dv">5</span>, <span class="at">size =</span> <span class="fl">1.5</span>) <span class="sc">+</span> </span>
+<span id="cb78-5"><a href="#cb78-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>gender) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;bottom&quot;</span>) <span class="sc">+</span></span>
+<span id="cb78-6"><a href="#cb78-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Average Relative Performance by Feedback &amp; Time&quot;</span> , <span class="at">subtitle =</span> <span class="st">&quot;Facet by gender&quot;</span>,</span>
+<span id="cb78-7"><a href="#cb78-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Repetitions&quot;</span> , <span class="at">y =</span> <span class="st">&quot;Average Relative Performance&quot;</span>)</span></code></pre></div>
+<p><img src="anova_files/figure-html/unnamed-chunk-49-1.png" width="672" /></p>
+<div id="analysis" class="section level3">
+<h3>Analysis</h3>
+<div class="sourceCode" id="cb79"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;lmerTest&quot;</span>)</span></code></pre></div>
+<div id="one-way" class="section level4">
+<h4>One-way</h4>
+<p>let’s filter only control group: feedback == “no feedback”</p>
+<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a>nofeed_df <span class="ot">=</span>  feedback_long_df[(feedback_long_df<span class="sc">$</span>feedback<span class="sc">==</span><span class="st">&quot;no feedback&quot;</span>),]</span>
+<span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb80-3"><a href="#cb80-3" aria-hidden="true" tabindex="-1"></a>feed_fit<span class="fl">.1</span> <span class="ot">=</span><span class="fu">lmer</span>(performance <span class="sc">~</span>  (<span class="dv">1</span> <span class="sc">|</span> id) , <span class="at">data =</span> nofeed_df )</span></code></pre></div>
+<div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(feed_fit<span class="fl">.1</span>)</span></code></pre></div>
+<pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [
+## lmerModLmerTest]
+## Formula: performance ~ (1 | id)
+##    Data: nofeed_df
+## 
+## REML criterion at convergence: 1836.1
+## 
+## Scaled residuals: 
+##      Min       1Q   Median       3Q      Max 
+## -2.56607 -0.66845 -0.09021  0.66234  2.60035 
+## 
+## Random effects:
+##  Groups   Name        Variance Std.Dev.
+##  id       (Intercept) 48.42    6.958   
+##  Residual             50.43    7.101   
+## Number of obs: 264, groups:  id, 22
+## 
+## Fixed effects:
+##             Estimate Std. Error     df t value Pr(&gt;|t|)    
+## (Intercept)   79.807      1.547 21.000    51.6   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(feed_fit<span class="fl">.1</span>, <span class="at">oldNames=</span><span class="cn">FALSE</span>)</span></code></pre></div>
+<pre><code>## Computing profile confidence intervals ...</code></pre>
+<pre><code>##                       2.5 %    97.5 %
+## sd_(Intercept)|id  5.010525  9.619382
+## sigma              6.512773  7.784242
+## (Intercept)       76.711722 82.902944</code></pre>
+<p><strong>Checking Assumptions</strong></p>
+<div class="sourceCode" id="cb86"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a>feed_fit.<span class="fl">1.</span>resid <span class="ot">=</span> <span class="fu">resid</span>(feed_fit<span class="fl">.1</span>)</span>
+<span id="cb86-2"><a href="#cb86-2" aria-hidden="true" tabindex="-1"></a>feed_fit.<span class="fl">1.</span>predict <span class="ot">=</span> <span class="fu">predict</span>(feed_fit<span class="fl">.1</span>)</span>
+<span id="cb86-3"><a href="#cb86-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(feed_fit.<span class="fl">1.</span>predict,feed_fit.<span class="fl">1.</span>resid, <span class="at">xlab =</span> <span class="st">&quot;Fitted Values&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;Residuals&quot;</span>)</span>
+<span id="cb86-4"><a href="#cb86-4" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="dv">0</span>,<span class="dv">0</span>, <span class="at">col =</span> <span class="st">&quot;red&quot;</span>)</span></code></pre></div>
+<p><img src="anova_files/figure-html/unnamed-chunk-54-1.png" width="672" /></p>
+<div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(feed_fit.<span class="fl">1.</span>resid)</span>
+<span id="cb87-2"><a href="#cb87-2" aria-hidden="true" tabindex="-1"></a><span class="fu">qqline</span>(feed_fit.<span class="fl">1.</span>resid)</span></code></pre></div>
+<p><img src="anova_files/figure-html/unnamed-chunk-55-1.png" width="672" /></p>
+<p>We can also get “estimates” (conditional means) of the random effects <span class="math inline">\(a_i\)</span> with the function <code>ranef</code>:</p>
+<div class="sourceCode" id="cb88"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(<span class="fu">ranef</span>(feed_fit<span class="fl">.1</span>)<span class="sc">$</span>id[, <span class="st">&quot;(Intercept)&quot;</span>], <span class="at">main =</span> <span class="st">&quot;Random effects&quot;</span>)</span>
+<span id="cb88-2"><a href="#cb88-2" aria-hidden="true" tabindex="-1"></a><span class="fu">qqline</span>(<span class="fu">ranef</span>(feed_fit<span class="fl">.1</span>)<span class="sc">$</span>id[, <span class="st">&quot;(Intercept)&quot;</span>])</span></code></pre></div>
+<p><img src="anova_files/figure-html/unnamed-chunk-56-1.png" width="672" /></p>
+</div>
+<div id="two-way" class="section level4">
+<h4>Two-way</h4>
+<div id="option-1-1" class="section level5">
+<h5><strong>Option 1</strong></h5>
+<p>We will continue with the data for the control group only and add a fixed effect to gender:</p>
+<div class="sourceCode" id="cb89"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a>feed_fit<span class="fl">.2</span> <span class="ot">=</span> <span class="fu">lmer</span>(performance <span class="sc">~</span>  gender <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> id) , <span class="at">data =</span> nofeed_df )</span>
+<span id="cb89-2"><a href="#cb89-2" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(feed_fit<span class="fl">.2</span>)</span></code></pre></div>
+<pre><code>## Type III Analysis of Variance Table with Satterthwaite&#39;s method
+##        Sum Sq Mean Sq NumDF DenDF F value Pr(&gt;F)
+## gender 2.5789  2.5789     1    20  0.0511 0.8234</code></pre>
+<div class="sourceCode" id="cb91"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(feed_fit<span class="fl">.2</span>)</span></code></pre></div>
+<pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [
+## lmerModLmerTest]
+## Formula: performance ~ gender + (1 | id)
+##    Data: nofeed_df
+## 
+## REML criterion at convergence: 1832
+## 
+## Scaled residuals: 
+##      Min       1Q   Median       3Q      Max 
+## -2.57669 -0.67304 -0.09008  0.66272  2.59291 
+## 
+## Random effects:
+##  Groups   Name        Variance Std.Dev.
+##  id       (Intercept) 50.91    7.135   
+##  Residual             50.43    7.101   
+## Number of obs: 264, groups:  id, 22
+## 
+## Fixed effects:
+##             Estimate Std. Error      df t value Pr(&gt;|t|)    
+## (Intercept)  79.4494     2.2383 19.9999  35.495   &lt;2e-16 ***
+## gender2       0.7158     3.1655 19.9999   0.226    0.823    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Correlation of Fixed Effects:
+##         (Intr)
+## gender2 -0.707</code></pre>
+<div class="sourceCode" id="cb93"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(feed_fit<span class="fl">.2</span>, <span class="at">oldNames=</span><span class="cn">FALSE</span>)</span></code></pre></div>
+<pre><code>## Computing profile confidence intervals ...</code></pre>
+<pre><code>##                       2.5 %    97.5 %
+## sd_(Intercept)|id  5.003073  9.606553
+## sigma              6.512776  7.784244
+## (Intercept)       75.077149 83.821680
+## gender2           -5.467481  6.899154</code></pre>
+<p><strong>Checking Assumptions</strong></p>
+<div class="sourceCode" id="cb96"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb96-1"><a href="#cb96-1" aria-hidden="true" tabindex="-1"></a>resid_plot <span class="ot">=</span> <span class="cf">function</span>(model) {</span>
+<span id="cb96-2"><a href="#cb96-2" aria-hidden="true" tabindex="-1"></a>  model.resid <span class="ot">=</span> <span class="fu">resid</span>(model)</span>
+<span id="cb96-3"><a href="#cb96-3" aria-hidden="true" tabindex="-1"></a>  model.predict <span class="ot">=</span> <span class="fu">predict</span>(model)</span>
+<span id="cb96-4"><a href="#cb96-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>(model.predict,model.resid, <span class="at">xlab =</span> <span class="st">&quot;Fitted Values&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;Residuals&quot;</span>)</span>
+<span id="cb96-5"><a href="#cb96-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">abline</span>(<span class="dv">0</span>,<span class="dv">0</span>, <span class="at">col =</span> <span class="st">&quot;red&quot;</span>)</span>
+<span id="cb96-6"><a href="#cb96-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb96-7"><a href="#cb96-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb96-8"><a href="#cb96-8" aria-hidden="true" tabindex="-1"></a>qq_plot <span class="ot">=</span> <span class="cf">function</span>(model) {</span>
+<span id="cb96-9"><a href="#cb96-9" aria-hidden="true" tabindex="-1"></a>  model.resid <span class="ot">=</span> <span class="fu">resid</span>(model)</span>
+<span id="cb96-10"><a href="#cb96-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">qqnorm</span>(model.resid)</span>
+<span id="cb96-11"><a href="#cb96-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">qqline</span>(model.resid)</span>
+<span id="cb96-12"><a href="#cb96-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb96-13"><a href="#cb96-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb96-14"><a href="#cb96-14" aria-hidden="true" tabindex="-1"></a><span class="fu">resid_plot</span>(feed_fit<span class="fl">.2</span>)</span></code></pre></div>
+<p><img src="anova_files/figure-html/unnamed-chunk-59-1.png" width="672" /></p>
+<div class="sourceCode" id="cb97"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qq_plot</span>(feed_fit<span class="fl">.2</span>)</span></code></pre></div>
+<p><img src="anova_files/figure-html/unnamed-chunk-59-2.png" width="672" /></p>
+<div class="sourceCode" id="cb98"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(<span class="fu">ranef</span>(feed_fit<span class="fl">.2</span>)<span class="sc">$</span>id[, <span class="st">&quot;(Intercept)&quot;</span>], <span class="at">main =</span> <span class="st">&quot;Random effects&quot;</span>)</span>
+<span id="cb98-2"><a href="#cb98-2" aria-hidden="true" tabindex="-1"></a><span class="fu">qqline</span>(<span class="fu">ranef</span>(feed_fit<span class="fl">.2</span>)<span class="sc">$</span>id[, <span class="st">&quot;(Intercept)&quot;</span>])</span></code></pre></div>
+<p><img src="anova_files/figure-html/unnamed-chunk-60-1.png" width="672" /></p>
+</div>
+<div id="option-2-1" class="section level5">
+<h5><strong>Option 2</strong></h5>
+<div class="sourceCode" id="cb99"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a>feed_fit<span class="fl">.3</span> <span class="ot">=</span> <span class="fu">lmer</span>(performance <span class="sc">~</span> feedback <span class="sc">+</span>  (<span class="dv">1</span> <span class="sc">|</span> id) , <span class="at">data =</span> feedback_long_df)</span>
+<span id="cb99-2"><a href="#cb99-2" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(feed_fit<span class="fl">.3</span>)</span></code></pre></div>
+<pre><code>## Type III Analysis of Variance Table with Satterthwaite&#39;s method
+##          Sum Sq Mean Sq NumDF DenDF F value    Pr(&gt;F)    
+## feedback   6474    3237     2   768  36.765 5.651e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<div class="sourceCode" id="cb101"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb101-1"><a href="#cb101-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(feed_fit<span class="fl">.3</span>)</span></code></pre></div>
+<pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [
+## lmerModLmerTest]
+## Formula: performance ~ feedback + (1 | id)
+##    Data: feedback_long_df
+## 
+## REML criterion at convergence: 5818.7
+## 
+## Scaled residuals: 
+##     Min      1Q  Median      3Q     Max 
+## -3.5559 -0.6465 -0.0246  0.6743  3.0531 
+## 
+## Random effects:
+##  Groups   Name        Variance Std.Dev.
+##  id       (Intercept)  7.692   2.773   
+##  Residual             88.046   9.383   
+## Number of obs: 792, groups:  id, 22
+## 
+## Fixed effects:
+##                     Estimate Std. Error       df t value Pr(&gt;|t|)    
+## (Intercept)          86.8032     0.8265  45.8612 105.021  &lt; 2e-16 ***
+## feedbackno feedback  -6.9958     0.8167 768.0000  -8.566  &lt; 2e-16 ***
+## feedbackpositive     -3.7771     0.8167 768.0000  -4.625  4.4e-06 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Correlation of Fixed Effects:
+##             (Intr) fdbckf
+## fdbcknfdbck -0.494       
+## feedbckpstv -0.494  0.500</code></pre>
+<div class="sourceCode" id="cb103"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb103-1"><a href="#cb103-1" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(feed_fit<span class="fl">.3</span>, <span class="at">oldNames=</span><span class="cn">FALSE</span>)</span></code></pre></div>
+<pre><code>## Computing profile confidence intervals ...</code></pre>
+<pre><code>##                         2.5 %    97.5 %
+## sd_(Intercept)|id    1.788906  4.024842
+## sigma                8.921857  9.859356
+## (Intercept)         85.175738 88.430565
+## feedbackno feedback -8.596459 -5.395179
+## feedbackpositive    -5.377742 -2.176461</code></pre>
+<p><strong>Checking Assumptions</strong></p>
+<div class="sourceCode" id="cb106"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb106-1"><a href="#cb106-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resid_plot</span>(feed_fit<span class="fl">.3</span>)</span></code></pre></div>
+<p><img src="anova_files/figure-html/unnamed-chunk-63-1.png" width="672" /></p>
+<div class="sourceCode" id="cb107"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb107-1"><a href="#cb107-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qq_plot</span>(feed_fit<span class="fl">.3</span>)</span></code></pre></div>
+<p><img src="anova_files/figure-html/unnamed-chunk-63-2.png" width="672" /></p>
+<div class="sourceCode" id="cb108"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb108-1"><a href="#cb108-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(<span class="fu">ranef</span>(feed_fit<span class="fl">.3</span>)<span class="sc">$</span>id[, <span class="st">&quot;(Intercept)&quot;</span>], <span class="at">main =</span> <span class="st">&quot;Random effects&quot;</span>)</span>
+<span id="cb108-2"><a href="#cb108-2" aria-hidden="true" tabindex="-1"></a><span class="fu">qqline</span>(<span class="fu">ranef</span>(feed_fit<span class="fl">.3</span>)<span class="sc">$</span>id[, <span class="st">&quot;(Intercept)&quot;</span>])</span></code></pre></div>
+<p><img src="anova_files/figure-html/unnamed-chunk-64-1.png" width="672" /></p>
+</div>
+<div id="option-3" class="section level5">
+<h5><strong>Option 3</strong></h5>
+<div class="sourceCode" id="cb109"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb109-1"><a href="#cb109-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(feedback_long_df, <span class="fu">aes</span>(<span class="at">x =</span> gender, <span class="at">y =</span> performance, <span class="at">group =</span> feedback, <span class="at">col =</span> feedback)) <span class="sc">+</span> </span>
+<span id="cb109-2"><a href="#cb109-2" aria-hidden="true" tabindex="-1"></a>   <span class="fu">stat_summary</span>(<span class="at">fun.y =</span> mean, <span class="at">geom =</span> <span class="st">&quot;line&quot;</span>, <span class="at">size =</span> <span class="fl">1.5</span>) <span class="sc">+</span></span>
+<span id="cb109-3"><a href="#cb109-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span> <span class="st">&quot;Gender&quot;</span>, <span class="at">y=</span><span class="st">&quot;Relative Performance&quot;</span>)</span></code></pre></div>
+<p><img src="anova_files/figure-html/unnamed-chunk-65-1.png" width="672" /></p>
+<div class="sourceCode" id="cb110"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb110-1"><a href="#cb110-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(feedback_long_df, <span class="fu">aes</span>(<span class="at">x =</span> feedback, <span class="at">y =</span> performance, <span class="at">group =</span> gender, <span class="at">col =</span> gender)) <span class="sc">+</span> </span>
+<span id="cb110-2"><a href="#cb110-2" aria-hidden="true" tabindex="-1"></a>   <span class="fu">stat_summary</span>(<span class="at">fun.y =</span> mean, <span class="at">geom =</span> <span class="st">&quot;line&quot;</span>, <span class="at">size =</span> <span class="fl">1.5</span>) <span class="sc">+</span></span>
+<span id="cb110-3"><a href="#cb110-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span> <span class="st">&quot;Feedback&quot;</span>, <span class="at">y=</span><span class="st">&quot;Relative Performance&quot;</span>)</span></code></pre></div>
+<p><img src="anova_files/figure-html/unnamed-chunk-66-1.png" width="672" /></p>
+<div class="sourceCode" id="cb111"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb111-1"><a href="#cb111-1" aria-hidden="true" tabindex="-1"></a>feed_fit<span class="fl">.4</span> <span class="ot">=</span> <span class="fu">lmer</span>(performance <span class="sc">~</span> feedback <span class="sc">+</span> gender <span class="sc">+</span> feedback <span class="sc">*</span> gender  <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> id) , <span class="at">data =</span> feedback_long_df)</span>
+<span id="cb111-2"><a href="#cb111-2" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(feed_fit<span class="fl">.4</span>)</span></code></pre></div>
+<pre><code>## Type III Analysis of Variance Table with Satterthwaite&#39;s method
+##                 Sum Sq Mean Sq NumDF DenDF F value    Pr(&gt;F)    
+## feedback        6474.0  3237.0     2   766 36.9555 4.767e-16 ***
+## gender           121.5   121.5     1    20  1.3869   0.25276    
+## feedback:gender  524.3   262.2     2   766  2.9930   0.05072 .  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<div class="sourceCode" id="cb113"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb113-1"><a href="#cb113-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(feed_fit<span class="fl">.4</span>)</span></code></pre></div>
+<pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [
+## lmerModLmerTest]
+## Formula: performance ~ feedback + gender + feedback * gender + (1 | id)
+##    Data: feedback_long_df
+## 
+## REML criterion at convergence: 5803.6
+## 
+## Scaled residuals: 
+##     Min      1Q  Median      3Q     Max 
+## -3.4647 -0.6454  0.0022  0.6514  3.1460 
+## 
+## Random effects:
+##  Groups   Name        Variance Std.Dev.
+##  id       (Intercept)  7.522   2.743   
+##  Residual             87.592   9.359   
+## Number of obs: 792, groups:  id, 22
+## 
+## Fixed effects:
+##                             Estimate Std. Error       df t value Pr(&gt;|t|)    
+## (Intercept)                  88.2024     1.1608  44.0579  75.987  &lt; 2e-16 ***
+## feedbackno feedback          -8.7530     1.1520 766.0000  -7.598 8.79e-14 ***
+## feedbackpositive             -3.8412     1.1520 766.0000  -3.334 0.000896 ***
+## gender2                      -2.7986     1.6416  44.0579  -1.705 0.095270 .  
+## feedbackno feedback:gender2   3.5144     1.6292 766.0000   2.157 0.031306 *  
+## feedbackpositive:gender2      0.1283     1.6292 766.0000   0.079 0.937270    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Correlation of Fixed Effects:
+##             (Intr) fdbckf fdbckp gendr2 ffdb:2
+## fdbcknfdbck -0.496                            
+## feedbckpstv -0.496  0.500                     
+## gender2     -0.707  0.351  0.351              
+## ffdbck:gnd2  0.351 -0.707 -0.354 -0.496       
+## fdbckpstv:2  0.351 -0.354 -0.707 -0.496  0.500</code></pre>
+<div class="sourceCode" id="cb115"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb115-1"><a href="#cb115-1" aria-hidden="true" tabindex="-1"></a>feedback_long_df</span></code></pre></div>
+<pre><code>## # A tibble: 792 x 5
+##    id    gender  time performance feedback
+##    &lt;fct&gt; &lt;fct&gt;  &lt;int&gt;       &lt;dbl&gt; &lt;fct&gt;   
+##  1 1     1          1        92.4 negative
+##  2 1     1          2        93.2 negative
+##  3 1     1          3        93.6 negative
+##  4 1     1          4        90.5 negative
+##  5 1     1          5        87.1 negative
+##  6 1     1          6        90.2 negative
+##  7 1     1          7        84.3 negative
+##  8 1     1          8        84.3 negative
+##  9 1     1          9        87.6 negative
+## 10 1     1         10        81.2 negative
+## # ... with 782 more rows</code></pre>
+<p><strong>Checking Assumptions</strong></p>
+<div class="sourceCode" id="cb117"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb117-1"><a href="#cb117-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resid_plot</span>(feed_fit<span class="fl">.4</span>)</span></code></pre></div>
+<p><img src="anova_files/figure-html/unnamed-chunk-69-1.png" width="672" /></p>
+<div class="sourceCode" id="cb118"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb118-1"><a href="#cb118-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qq_plot</span>(feed_fit<span class="fl">.4</span>)</span></code></pre></div>
+<p><img src="anova_files/figure-html/unnamed-chunk-69-2.png" width="672" /></p>
+<div class="sourceCode" id="cb119"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb119-1"><a href="#cb119-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(<span class="fu">ranef</span>(feed_fit<span class="fl">.4</span>)<span class="sc">$</span>id[, <span class="st">&quot;(Intercept)&quot;</span>], <span class="at">main =</span> <span class="st">&quot;Random effects&quot;</span>)</span>
+<span id="cb119-2"><a href="#cb119-2" aria-hidden="true" tabindex="-1"></a><span class="fu">qqline</span>(<span class="fu">ranef</span>(feed_fit<span class="fl">.4</span>)<span class="sc">$</span>id[, <span class="st">&quot;(Intercept)&quot;</span>])</span></code></pre></div>
+<p><img src="anova_files/figure-html/unnamed-chunk-70-1.png" width="672" /></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3,h4",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
