@@ -1,4 +1,3 @@
-## Stat Models B
-[LMM](LMM.html)  
+## Stat Models B 
 
 [ANOVA](anova.html)
