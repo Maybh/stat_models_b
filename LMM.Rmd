@@ -1,0 +1,185 @@
+---
+title: "LMM"
+author: "May"
+date: "2/22/2021"
+output: 
+  html_document:
+    self_contained: false
+    toc: true
+    toc_float: true
+    toc_depth: 4
+    keep_tex: yes
+    theme: united
+    highlight: tango
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggplot2)
+
+```
+
+```{r, include=F}
+colorize <- function(x, color) {
+  if (knitr::is_latex_output()) {
+    sprintf("\\textcolor{%s}{%s}", color, x)
+  } else if (knitr::is_html_output()) {
+    sprintf("<span style='color: %s;'>%s</span>", color, 
+      x)
+  } else x
+}
+```
+
+
+
+# Pregnancies Dataset
+
+```{r}
+ubarim = read.csv("datasets/ubarim.csv")
+```
+
+```{r}
+ubarim = ubarim[,-1]
+head(ubarim)
+```
+## Descriptive Statistics
+
+```{r}
+ubarim %>% ggplot(aes( x= head_cir  )) +
+  geom_histogram( fill = 'darkblue', color = 'white')
+```
+
+
+
+**NA's** 
+
+```{r}
+sum_is_na = function(col) return(sum(is.na(col)))
+apply(ubarim,2, sum_is_na)
+```
+
+```{r}
+dim(ubarim)
+```
+
+**How many technitions?**
+```{r}
+ubarim %>% select(technition) %>% n_distinct()
+```
+
+Let's look at the distribution of the number of examinations per technician:
+```{r}
+ubarim %>% group_by(technition) %>% count() %>%
+  ggplot(aes(x=n)) +
+  geom_histogram(bins = 25, fill = 'darkblue', color = 'white') +
+  labs(x= "No. of examination for a technician",
+       title = "Histogram of No. of Examinations per Technician")
+```
+
+
+
+
+```{r}
+ubarim %>% group_by(technition) %>% count(sort=T)
+```
+
+How many mom's?
+```{r}
+ubarim %>% select(snumber) %>% n_distinct()
+```
+
+Distribution of births per mother:
+```{r}
+ubarim %>% group_by(snumber) %>% summarise(n_births =  n_distinct(meshoar)) %>%
+  ggplot(aes(x=factor(n_births))) +
+  geom_bar(fill = 'darkblue' , color = 'white') +
+  labs( x= 'No. births per mom' , y= 'Birth Count' )
+```
+
+```{r}
+ubarim %>% group_by(snumber) %>% summarise(n_births =  n_distinct(meshoar)) %>% arrange(-n_births)
+```
+
+```{r}
+ubarim = ubarim %>% unite("mom_embryo_unique", c("snumber", "meshoar"), remove = FALSE) 
+```
+
+How many pregnancies? 
+```{r}
+ubarim %>% select(mom_embryo_unique) %>% n_distinct()
+```
+
+How many pregnancied by technician? 
+```{r}
+ubarim %>%  group_by(technition) %>% summarise(n_preg = n_distinct(mom_embryo_unique)) %>%
+  ggplot(aes(x=n_preg)) +
+  geom_histogram(bins = 30, fill = 'darkblue', color = 'white') +
+  labs(x= "No. of pregnancies per technician",
+       title = "Histogram of No. of pregnancies per Technician")
+  
+```
+
+
+
+
+
+
+
+
+## Linear Models
+
+```{r}
+ubarim_fit.1 = lm(head_cir~pregweek, data = ubarim)
+summary(ubarim_fit.1)
+```
+
+
+
+```{r}
+ubarim %>% ggplot(aes(x=pregweek, y=head_cir)) +
+  geom_point(alpha=.03 ) +
+  geom_smooth(method = lm, se = FALSE, colour = '#148F77')
+```
+
+
+```{r}
+ubarim_fit.2 = lm(head_cir ~ poly(pregweek,3) , data = ubarim)
+summary(ubarim_fit.2)
+```
+
+```{r}
+ubarim %>% ggplot(aes(x=pregweek, y=head_cir)) +
+  geom_point(alpha=.05) +
+  stat_smooth(method="lm",  formula=y ~ poly(x, 3, raw=TRUE),  colour = '#148F77')
+```
+
+
+## Linear Random Effects
+```{r, warning=F, message=F}
+library(lme4)
+```
+
+**Random intercept for technition:** 
+```{r}
+lme.1<- lmer( head_cir ~ (1|technition) + pregweek  , data = ubarim )
+summary(lme.1)
+```
+
+
+**Random intercept for embryo:** 
+```{r}
+lme.2<- lmer( head_cir ~ (1|mom_embryo_unique) + pregweek  , data = ubarim )
+summary(lme.2)
+```
+
+Random intercept for mother: 
+```{r}
+lme.3<- lmer( head_cir ~ (1|snumber) + pregweek  , data = ubarim )
+summary(lme.3)
+```
+
+`r colorize("Random Slope???", "red")`  
+
+
