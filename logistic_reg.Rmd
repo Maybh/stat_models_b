@@ -1,0 +1,507 @@
+---
+title: "Logistic Regression"
+author: "May"
+date: "2/24/2021"
+output: 
+  html_document:
+    # self_contained: false
+    toc: true
+    toc_float: true
+    toc_depth: 4
+    keep_tex: yes
+    theme: united
+    highlight: tango
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggplot2)
+
+```
+
+```{r, include=F}
+colorize <- function(x, color) {
+  if (knitr::is_latex_output()) {
+    sprintf("\\textcolor{%s}{%s}", color, x)
+  } else if (knitr::is_html_output()) {
+    sprintf("<span style='color: %s;'>%s</span>", color, 
+      x)
+  } else x
+}
+```
+
+
+# Myocardial Infarction
+
+```{r, warning=F, message=F}
+mi_df = read_csv("datasets/MI_PracticeDataset.csv")
+```
+
+```{r}
+head(mi_df)
+```
+
+Format:
+
+- `sex` -  1- male , 2- female
+- `SteadyPartner` - Living with steady partner (0 - No, 1- Yes)
+- `RelIncome` - 1- Lower; 2- Similar; 3- Higher; 9-Refuse to tell 
+- `PerceivHealth` - 1- Poor; 2- Not so good; 3- Fair; 4-Good; 5- Excellent
+- `Health_Prob` - Number of health problems
+- `Work_T5` / `Work_T4` - Employment status reported during follow-up interviews (0- None; 1- Part/full job; 2- Unknown)
+- `T1_pa` / `T2_pa` / `T3_pa` / `T4_pa` /`T5_pa` - Physical activity level reported in the i-th interview. Ta_p1 - refers to the activity a before myocardial infarction.
+- `cursmoker` - Smoking as reported in the first interview - as stated at the time of hospitalization, refers to the smoking status in the year preceding the infarction.
+
+```{r}
+glimpse(mi_df)
+```
+```{r}
+dim(mi_df)
+```
+
+NA's? 
+```{r}
+sum_is_na = function(col) return(sum(is.na(col)))
+apply(mi_df, 2, sum_is_na)
+```
+
+## Descriptive Statistics
+
+```{r}
+with(data = mi_df,  table(Sex ))
+with(data = mi_df,  table(PerceivHealth ))
+with(data = mi_df,  table(PerceivHealth, death_update ))
+with(data = mi_df,  table(RelIncome ))
+with(data = mi_df,  table(formersmoker ))
+with(data = mi_df,  table(CVDeath_2012, death_update))
+with(data = mi_df,  prop.table(table(Sex, death_update)))
+
+
+```
+
+
+
+## Logistic Regression
+
+### One variable (continuous or categorical)
+
+#### X = formersmoker
+
+```{r}
+with(data = mi_df,  table( formersmoker, death_update))
+with(data = mi_df,  prop.table(table( formersmoker, death_update)))
+```
+
+OR: $\frac{688\cdot111}{528\cdot111} =0.7455$ 
+
+
+
+
+
+```{r}
+fit.1 = glm(death_update ~ formersmoker  ,data =mi_df ,family = 'binomial')
+
+```
+
+
+```{r}
+summary(fit.1)
+```
+
+```{r}
+# OR
+exp(coef(fit.1)[2])
+
+```
+
+```{r}
+# wald confidence interval of b1:
+confint.default(fit.1)
+
+# manualy
+# option 1 
+cont = c(0,1)
+var_b1 = as.numeric ( t(cont) %*% vcov(fit.1) %*% cont)
+b1 = coef(fit.1)[2]
+ci_b1 = b1 + c(-1,1) * qnorm(.975) * sqrt(var_b1)
+ci_b1
+
+# option 2 
+b1 + c(-1,1) * qnorm(.975) * summary(fit.1)$coefficient[2,2]
+```
+
+```{r}
+# ci for OR = exp(b1):
+exp(ci_b1)
+```
+
+```{r}
+# ci for probability of death when x=1 (formersmokre=1)
+b0 = as.numeric( coef(fit.1)[1] ) 
+b1 =as.numeric( coef(fit.1)[2] )
+
+contr = c(1,1)
+var_cbeta = t(contr) %*% vcov (fit.1) %*% contr
+beta_hat = as.numeric(coef(fit.1)) 
+ci_lp = as.numeric( contr %*% beta_hat)  + c(-1,1) * qnorm(.975) * sqrt(as.numeric( var_cbeta))
+cat("CI of beta0+beta1:", ci_lp[1], ci_lp[2])
+
+logit_fun = function(x) return(exp(x)/ (1+exp(x)))
+ci_p =  logit_fun(ci_lp)
+cat("CI of the probability of mortality for a formersmoker (X=1):", ci_p[1], ci_p[2] )
+```
+
+
+#### X = Sex
+
+```{r}
+with(data = mi_df,  table(Sex , death_update))
+with(data = mi_df,  prop.table(table(Sex , death_update)))
+```
+
+
+```{r}
+fit.2 =  glm(death_update ~ factor(Sex)  ,data =mi_df ,family = 'binomial')
+summary(fit.2)
+```
+
+
+
+#### X =  Diabetes
+
+```{r}
+with(data = mi_df,  table(Diabetes , death_update))
+with(data = mi_df,  prop.table(table(Diabetes , death_update)))
+```
+
+
+```{r}
+fit.3 =  glm(death_update ~ Diabetes  ,data =mi_df ,family = 'binomial')
+summary(fit.3)
+```
+
+
+#### X =  age
+
+```{r}
+mi_df %>% ggplot( aes( x=Age, fill= factor(death_update))) +
+  geom_histogram(color = 'white') 
+
+mi_df %>% group_by(Age) %>% mutate(n= n() , p_emp = sum(death_update)/n, logit_emp = log(p_emp/ (1-p_emp)) ) %>%
+  ggplot(aes(x= Age, y=p_emp, size = n)) + geom_point()  + scale_size_continuous(guide =FALSE)
+
+mi_df %>% group_by(Age) %>% mutate(n= n() , p_emp = sum(death_update)/n, logit_emp = log(p_emp/ (1-p_emp)) ) %>%
+  ggplot(aes(x= Age, y=logit_emp, size = n)) + geom_point() + scale_size_continuous(guide =FALSE)
+
+mi_df %>% group_by(Age) %>% mutate(n= n() , p_emp = sum(death_update)/n, logit_emp = log(p_emp/ (1-p_emp)) ) %>%
+  ggplot(aes(x= Age, y=logit_emp, size = n)) + geom_point() + scale_size_continuous(guide =FALSE) +
+  geom_smooth(method = 'glm', formula = y~poly(x,2))
+ 
+
+```
+
+
+```{r}
+fit.3 =  glm(death_update ~Age  ,data =mi_df ,family = 'binomial')
+summary(fit.3)
+```
+
+```{r}
+fit.3.2 =  glm(death_update ~ poly(Age,2)  ,data =mi_df ,family = 'binomial')
+summary(fit.3.2)
+```
+
+####  X = PerceivHealth
+
+```{r}
+with(data = mi_df,  table(PerceivHealth, death_update))
+with(data = mi_df,  prop.table(table(PerceivHealth, death_update)))
+```
+
+
+```{r}
+fit.4 =  glm(death_update ~ factor(PerceivHealth)  ,data =mi_df ,family = 'binomial')
+summary(fit.4)
+```
+
+
+####  X =  Health_Prob
+
+```{r}
+with(data = mi_df,  table(death_update,  Health_Prob))
+with(data = mi_df,  prop.table(table(death_update,  Health_Prob)))
+```
+
+```{r}
+mi_df %>% group_by(Health_Prob) %>% summarise(n=n(), 
+                                              p_emp = sum(death_update)/n ) %>%
+  ggplot(aes( x=factor(Health_Prob), y= p_emp, size = n)) + 
+  geom_point()
+```
+
+
+```{r}
+# treat health prob as continious
+fit.5 =  glm(death_update ~ Health_Prob  ,data =mi_df ,family = 'binomial')
+summary(fit.5)
+```
+
+```{r}
+# treat health prob as categorical
+fit.5 =  glm(death_update ~ factor(Health_Prob)  ,data =mi_df ,family = 'binomial')
+summary(fit.5)
+```
+
+**Note**  
+
+```{r}
+mi_df %>% group_by( Health_Prob) %>%
+     summarise(n=n() , p_emp = sum(death_update)/ n ) %>% arrange(p_emp)
+```
+
+
+Note that we have only one person with Health_Prob = 9 are non-cases. Therefore, when fitting logistic regression, the coefficient for Health_Prob = 9 will be very small and the standard deviation will be very large. (The model will want to predict for these people P = 0 and this happens when $\beta \rightarrow -\infty$)
+
+
+####  X =  RelIncome
+
+```{r}
+mi_df %>% group_by(RelIncome) %>%
+  summarise(n=n(),  p_emp = sum(death_update)/n ) %>%
+  ggplot(aes( x=factor(RelIncome), y= p_emp, size = n)) + 
+  geom_point()
+```
+
+
+```{r}
+fit.6 =  glm(death_update ~ factor(RelIncome)  ,data =mi_df ,family = 'binomial')
+summary(fit.6)
+```
+
+
+
+### Multiple vars
+
+```{r}
+fit.7 =  glm(death_update ~ Sex + Age + Health_Prob + Diabetes + factor(PerceivHealth) +  formersmoker ,data =mi_df ,family = 'binomial')
+summary(fit.7)
+```
+
+```{r}
+fit.8 =  glm(death_update ~ Sex + Age + Health_Prob + Diabetes + factor(PerceivHealth) +  formersmoker 
+            + factor(RelIncome) ,data =mi_df ,family = 'binomial')
+
+summary(fit.8)
+```
+
+```{r}
+fit.9 =  glm(death_update ~ Sex + Age + factor( Health_Prob) + Diabetes + factor(PerceivHealth) +  formersmoker 
+             +  factor(RelIncome) ,data =mi_df ,family = 'binomial')
+
+summary(fit.9)
+```
+
+
+
+**Interactions:**
+
+
+
+```{r}
+fit.10 =  glm(death_update ~  Age*formersmoker  + factor(PerceivHealth) * Health_Prob  ,data =mi_df ,family = 'binomial')
+summary(fit.10)
+```
+
+
+```{r}
+fit.11 =  glm(death_update ~ Sex + Age * factor(RelIncome) * Health_Prob ,data =mi_df ,family = 'binomial')
+summary(fit.11)
+```
+
+
+
+# ????  Dataset
+
+`r colorize("Daniel -  Do we need another example? It seems to me that with the previous data it is possible to produce enough examples... ", "red")` 
+
+
+
+
+#  Logistic Regression for classification
+
+
+## **Default of credit card clients Data Set**
+
+Source:  https://archive.ics.uci.edu/ml/datasets/default+of+credit+card+clients#
+
+```{r, warning=F, message=F}
+default_df = read_csv("datasets/default_credit_card.csv", skip = 1)
+default_df = default_df %>% rename_all(janitor::make_clean_names)
+```
+
+
+```{r}
+glimpse( default_df)
+```
+
+**Attribute Information:**
+
+This research employed a binary variable, default payment (Yes = 1, No = 0), as the response variable. This study reviewed the literature and used the following 23 variables as explanatory variables:
+
+- `limit_bal `: Amount of the given credit (NT dollar): it includes both the individual consumer credit and his/her family (supplementary) credit.
+- `sex` :  Gender (1 = male; 2 = female).
+- `education` : Education (1 = graduate school; 2 = university; 3 = high school; 4 = others).
+- `marriage`: Marital status (1 = married; 2 = single; 3 = others).
+- `age` : Age (year). 
+- `pay_0`-`pay_6` : History of past payment. We tracked the past monthly payment records (from April to September, 2005) as follows:
+`pay_0` = the repayment status in September, 2005; `pay_2` = the repayment status in August, 2005; . . .;`pay_6` = the repayment status in April, 2005. The measurement scale for the repayment status is: -1 = pay duly; 1 = payment delay for one month; 2 = payment delay for two months; . . .; 8 = payment delay for eight months; 9 = payment delay for nine months and above.
+`bill_amt1` -`bill_amt6` : Amount of bill statement (NT dollar). `bill_amt1` = amount of bill statement in September, 2005; `bill_amt2` = amount of bill statement in August, 2005; . . .; `bill_amt6`= amount of bill statement in April, 2005.
+`pay_amt1`  -`pay_amt6` : Amount of previous payment (NT dollar). `pay_amt1` = amount paid in September, 2005; `pay_amt2` = amount paid in August, 2005; . . .;`pay_amt6` = amount paid in April, 2005.
+
+
+```{r}
+with(data = default_df, table(default_payment_next_month ))
+with(data = default_df, prop.table(table(default_payment_next_month )))
+```
+
+Note that we can guarantee almost 78% accuracy by classifying all observations to be 0.
+Of course we do not want to do that, We need to take into account the "costs" of the two types of errors we can make.
+
+
+```{r, warning=F, message=F}
+library(corrplot)
+cor_mat = cor(default_df %>% rename( "y" = "default_payment_next_month"))
+corrplot(cor_mat)
+```
+
+
+
+
+
+```{r}
+default_df = default_df %>% 
+  mutate_at(vars( sex,education,marriage,pay_0, pay_2, pay_3, pay_4, pay_5, pay_6), factor )
+```
+
+```{r}
+with(data =  default_df, table(sex, default_payment_next_month))
+with(data =  default_df, table(marriage, default_payment_next_month))
+```
+
+
+
+```{r}
+# education: 
+default_df %>% group_by(education) %>% count()
+# let's re-encode education = 0 , 5, 6, to  4 (other)
+default_df = default_df %>% mutate_at("education", as.numeric) %>% 
+  mutate(education = factor(ifelse((education==0 )| (education>=5) , 4, education))) 
+
+
+default_df %>% group_by(education) %>% 
+  summarise(n=n(), p_emp = sum(default_payment_next_month)/n) %>% 
+  ggplot(aes(x=education, y= p_emp, size = n)) +
+  geom_point()
+
+
+default_df %>% group_by(education) %>% 
+  summarise(n=n(), p_emp = sum(default_payment_next_month)/n)
+```
+
+```{r, warning=F, message=F}
+# limit ball
+default_df %>% ggplot(aes(x= limit_bal, fill =factor(default_payment_next_month) )) +
+  geom_histogram(color = 'white') + theme(legend.position = "bottom")
+
+```
+
+
+**Train & Test split**
+
+```{r}
+set.seed(31)
+idx_train = sample(x = 1:nrow(default_df),size = 0.8*round(nrow(default_df)), replace = F)
+train = default_df[idx_train, ]
+test = default_df[-idx_train, ]
+dim(train)
+dim(test)
+
+```
+
+**Fitting Logistic Regression**
+
+```{r}
+model.1 = glm(default_payment_next_month ~ age+ sex+ limit_bal + education , data=train, family=binomial)
+summary(model.1)
+```
+
+```{r}
+model.2 = glm(default_payment_next_month ~ age+ sex+ limit_bal + education +
+                pay_0 + pay_2 + pay_3 + pay_4 + pay_5+ pay_6 , data=train, family=binomial)
+summary(model.2)
+```
+
+
+```{r}
+model.3 = glm(default_payment_next_month ~ age+ sex+ limit_bal + education +
+                pay_0 + pay_2 + pay_3 + pay_4 + pay_5+ pay_6 
+              + bill_amt1 + bill_amt2 + bill_amt3+ bill_amt4 +bill_amt5 +bill_amt6 , data=train, family=binomial)
+summary(model.3)
+```
+
+**Predicting**
+
+Note: our dataset is **unbalanced** so a suitable threshold must be chosen.
+For example, a threshold = 0.25:
+
+```{r}
+# lets choose model.2 for prediction:
+predicted_prob_train = predict(model.2, type = "response")
+predictd_y_value_train = ifelse(predicted_prob_train > 0.25, 1, 0)
+
+# confusion matrix train
+table("Predicted" = predictd_y_value_train, "Actual" = train$default_payment_next_month)
+
+
+predicted_prob_test = predict(model.2, newdata = test,  type = "response")
+predictd_y_value_test = ifelse(predicted_prob_test > 0.25, 1, 0)
+
+# confusion matrix test
+table("Predicted" = predictd_y_value_test, "Actual" = test$default_payment_next_month)
+
+
+```
+
+**ROC curve**
+
+```{r, warning=F, message=F}
+library(ROCR)
+
+# train roc
+pred <- prediction(predicted_prob_train, train$default_payment_next_month)
+perf <- performance(pred,"tpr","fpr")
+plot(perf,colorize=TRUE)
+
+# test roc
+pred_test <- prediction(predicted_prob_test, test$default_payment_next_month)
+perf_test <- performance(pred,"tpr","fpr")
+plot(perf_test,colorize=TRUE)
+
+```
+
+```{r, warning=F, message=F}
+library(pROC)
+cutoffs <- seq(0.1, 0.9, 0.1)
+roc_obj <- roc(test$default_payment_next_month, predicted_prob_test)
+res = coords(roc_obj, x = cutoffs,
+                ret = c("accuracy", "recall", "precision",
+                        "specificity", "npv"),
+                transpose = TRUE)
+colnames(res) = cutoffs
+res
+```
+
+
+`r colorize("Daniel: Anything else here? regularization??? ", "red")` 
