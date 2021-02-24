@@ -731,15 +731,21 @@ qq_plot = function(model) {
   qqline(s.model.resid)
 }
 
-resid_plot(feed_fit.2)
-qq_plot(feed_fit.2)
+qq_plot_ref = function(model) {
+  sresid = (ranef(model)$id[, "(Intercept)"]) / sd((ranef(model)$id[, "(Intercept)"]))
+  qqnorm(sresid, main = "Random effects")
+  qqline(sresid)
+}
+
 ```
 
 
 ```{r}
-qqnorm(ranef(feed_fit.2)$id[, "(Intercept)"], main = "Random effects")
-qqline(ranef(feed_fit.2)$id[, "(Intercept)"])
+resid_plot(feed_fit.2)
+qq_plot(feed_fit.2)
+qq_plot_ref(feed_fit.2)
 ```
+
 
 
 
@@ -761,12 +767,7 @@ confint(feed_fit.3, oldNames=FALSE)
 ```{r}
 resid_plot(feed_fit.3)
 qq_plot(feed_fit.3)
-
-```
-
-```{r}
-qqnorm(ranef(feed_fit.3)$id[, "(Intercept)"], main = "Random effects")
-qqline(ranef(feed_fit.3)$id[, "(Intercept)"])
+qq_plot_ref(feed_fit.3)
 ```
 
 
@@ -790,13 +791,9 @@ feedback_long_df
 ```{r}
 resid_plot(feed_fit.4)
 qq_plot(feed_fit.4)
-
+qq_plot_ref(feed_fit.4)
 ```
 
-```{r}
-qqnorm(ranef(feed_fit.4)$id[, "(Intercept)"], main = "Random effects")
-qqline(ranef(feed_fit.4)$id[, "(Intercept)"])
-```
 
 
 
