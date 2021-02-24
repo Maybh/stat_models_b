@@ -614,11 +614,47 @@ feedback_long_df %>% group_by(feedback, time, gender) %>% summarise(mean_perf = 
 
 ### Analysis
 
+
+#### Fixed Effect ANOVA
+
+```{r}
+fe.fit.1 = aov(performance ~ feedback, data = feedback_long_df)
+anova(fe.fit.1)
+
+```
+
+```{r}
+fe.fit.2 = aov(performance ~ feedback + gender , data = feedback_long_df)
+anova(fe.fit.2)
+```
+
+**Interaction**
+
+```{r}
+ggplot(feedback_long_df, aes(x = gender, y = performance, group = feedback, col = feedback)) + 
+   stat_summary(fun.y = mean, geom = "line", size = 1.5) +
+  labs(x= "Gender", y="Relative Performance")
+```
+
+```{r}
+ggplot(feedback_long_df, aes(x = feedback, y = performance, group = gender, col = gender)) + 
+   stat_summary(fun.y = mean, geom = "line", size = 1.5) +
+  labs(x= "Feedback", y="Relative Performance")
+```
+
+```{r}
+fe.fit.3 = aov(performance ~ feedback * gender , data = feedback_long_df)
+anova(fe.fit.3)
+```
+
+
+
+
 ```{r, warning=F, message=F , results='hide'}
 library("lmerTest")
 ```
 
-#### One-way 
+#### One-way Random Effect
 
 let's filter only control group: feedback == "no feedback" 
 
@@ -633,12 +669,14 @@ summary(feed_fit.1)
 ```
 
 ```{r}
+# profile likelihood condifence intervals
 confint(feed_fit.1, oldNames=FALSE)
 ```
 
 **Checking Assumptions**
 
 ```{r}
+
 feed_fit.1.resid = resid(feed_fit.1)
 feed_fit.1.predict = predict(feed_fit.1)
 plot(feed_fit.1.predict,feed_fit.1.resid, xlab = "Fitted Values", ylab = "Residuals")
@@ -646,18 +684,23 @@ abline(0,0, col = "red")
 ```
 
 ```{r}
-qqnorm(feed_fit.1.resid)
-qqline(feed_fit.1.resid)
+sresid = feed_fit.1.resid / sd(feed_fit.1.resid)
+qqnorm(sresid) 
+abline(a = 0 , b = 1) # add line: y=x 
+
+# we can also use: 
+# qqline(sresid)
 ```
 
 We can also get “estimates” (conditional means) of the random effects $a_i$ with the function `ranef`:
 ```{r}
-qqnorm(ranef(feed_fit.1)$id[, "(Intercept)"], main = "Random effects")
-qqline(ranef(feed_fit.1)$id[, "(Intercept)"])
+sresid_ref = ranef(feed_fit.1)$id[, "(Intercept)"] / sd(ranef(feed_fit.1)$id[, "(Intercept)"])
+qqnorm(sresid_ref, main = "Random effects")
+qqline(sresid_ref)
 ```
 
 
-#### Two-way 
+#### Mixed Model Random Effect 
 
 ##### **Option 1**  
 We will continue with the data for the control group only and add a fixed effect to gender:
@@ -683,9 +726,9 @@ resid_plot = function(model) {
 }
 
 qq_plot = function(model) {
-  model.resid = resid(model)
-  qqnorm(model.resid)
-  qqline(model.resid)
+  s.model.resid = resid(model) / sd(resid(model))
+  qqnorm(s.model.resid)
+  qqline(s.model.resid)
 }
 
 resid_plot(feed_fit.2)
@@ -730,17 +773,7 @@ qqline(ranef(feed_fit.3)$id[, "(Intercept)"])
 
 ##### **Option 3**
 
-```{r}
-ggplot(feedback_long_df, aes(x = gender, y = performance, group = feedback, col = feedback)) + 
-   stat_summary(fun.y = mean, geom = "line", size = 1.5) +
-  labs(x= "Gender", y="Relative Performance")
-```
 
-```{r}
-ggplot(feedback_long_df, aes(x = feedback, y = performance, group = gender, col = gender)) + 
-   stat_summary(fun.y = mean, geom = "line", size = 1.5) +
-  labs(x= "Feedback", y="Relative Performance")
-```
 
 ```{r}
 feed_fit.4 = lmer(performance ~ feedback + gender + feedback * gender  + (1 | id) , data = feedback_long_df)
