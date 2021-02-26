@@ -4,7 +4,7 @@ author: "May"
 date: "2/20/2021"
 output: 
   html_document:
-    # self_contained: false
+    self_contained: false
     toc: true
     toc_float: true
     toc_depth: 4
@@ -15,9 +15,6 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(tidyverse)
-library(ggplot2)
-
 ```
 
 ```{r, include=F}
@@ -29,6 +26,11 @@ colorize <- function(x, color) {
       x)
   } else x
 }
+```
+
+```{r, warning=F, message=F}
+library(tidyverse)
+library(ggplot2)
 ```
 
 
@@ -52,7 +54,6 @@ This data set contains information on 76 people using one of three diets.
 
 ```{r}
 diet = read.csv("datasets/Diet_R.csv")
-diet = diet %>% drop_na()
 diet$weight_loss = diet$pre.weight - diet$weight6weeks
 diet$Diet = factor(diet$Diet)
 ```
@@ -60,6 +61,24 @@ diet$Diet = factor(diet$Diet)
 ```{r}
 glimpse(diet)
 ```
+
+```{r}
+diet %>% ggplot(aes(x=weight_loss)) +
+  geom_histogram(bins = 25, color = 'white', fill = 'darkblue') +
+  labs(x= "Weight Lost", title = "Histogram of Weight Lost")
+```
+
+```{r, warning=F}
+diet %>% ggplot(aes(x=weight_loss, fill = Diet)) +
+  geom_histogram(alpha= .5, color = 'white') +
+  labs(x= "Weight Lost", title = "Histogram of Weight Lost by Diet")
+```
+
+```{r}
+diet %>% group_by(Diet) %>% summarise(mean= mean(weight_loss),
+                                      sd = sd(weight_loss))
+```
+
 
 
 ## One-way ANOVA
