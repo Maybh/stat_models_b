@@ -516,57 +516,80 @@ ggplot(data = df, aes(x=Treatment_1, y = Treatment_2, size = y_exp, color = fact
 # Mixed Effect Model
 
 
-## Positive Negative Feedback  
+## Positive Negative Feedback  - 
 
 **The effects of positive and negative verbal feedback on repeated force production**
 
-```{r}
-pos_neg_df = read.csv("datasets/pos_neg_feedback.csv")
-```
+#### Arranging the data in a long format
 
 
 ```{r}
-glimpse(pos_neg_df)
+mvc = read.csv("datasets/pos_neg_feedback.csv")
+emg_bi = read.csv("datasets/BICEPS.csv")
+emg_tr = read.csv("datasets/TRICEPS.csv")
+
+emg_bi = emg_bi %>% rename_all(janitor::make_clean_names) %>%
+  rename_all(~str_remove(., "_")) %>% rename( "gender" = "a")
+
+emg_tr = emg_tr %>% rename_all(janitor::make_clean_names) %>%
+  rename_all(~str_remove(., "_"))  %>% rename( "gender" = "a")
+  
 ```
 
 ```{r, eval=F}
-neg_long = pos_neg_df %>% mutate("id"= row_number()) %>%
+to_long = function(data, activity) {
+  neg_long = data %>% mutate("id"= row_number()) %>%
   select( neg1:neg12, id, gender) %>% 
   pivot_longer(cols = neg1:neg12, values_to = "performance", names_to = "time") %>%
   mutate_at("time", ~(str_extract(., pattern = "[0-9]+"))) %>%
-  mutate(feedback = "negative")
+  mutate(feedback = "negative", activity = activity)
 
-pos_long =  pos_neg_df %>% mutate("id"= row_number()) %>%
+  pos_long =  data %>% mutate("id"= row_number()) %>%
   select( pos1:pos12, id, gender) %>% 
   pivot_longer(cols = pos1:pos12, values_to = "performance", names_to = "time") %>%
   mutate_at("time", ~(str_extract(., pattern = "[0-9]+"))) %>%
-  mutate(feedback = "positive")
+  mutate(feedback = "positive",  activity = activity)
 
-con_long =  pos_neg_df %>% mutate("id"= row_number()) %>%
+  con_long =  data %>% mutate("id"= row_number()) %>%
   select( con1:con12, id, gender) %>% 
   pivot_longer(cols = con1:con12, values_to = "performance", names_to = "time") %>%
   mutate_at("time", ~(str_extract(., pattern = "[0-9]+"))) %>%
-  mutate(feedback = "no feedback")
+  mutate(feedback = "no feedback",  activity = activity)
 
-feedback_long_df = neg_long %>% bind_rows(pos_long) %>% bind_rows(con_long)
+  return( neg_long %>% bind_rows(pos_long) %>% bind_rows(con_long) )
+}
+
+mvc_long = to_long(mvc, "mvc")
+emg_bi_long = to_long(emg_bi, "emg_bi")
+emg_tr_long = to_long(emg_tr, "emg_tr")
+
+
+feedback_long_df = mvc_long %>% bind_rows(emg_bi_long) %>% bind_rows(emg_tr_long)
 # write_csv(feedback_long_df, "datasets/feedback_long_df.csv")
 ```
 
-```{r, message=F, warning=F}
-feedback_long_df = read_csv("datasets/feedback_long_df.csv")
-head(feedback_long_df)
-```
 
+
+
+let's filter only mvc performance:
 
 
 ```{r}
-feedback_long_df = feedback_long_df %>% mutate_at(vars(id, gender, feedback), factor) %>% mutate_at("time",  as.integer)
+feedback_long_df = read.csv("datasets/feedback_long_df.csv")
+feedback_long_df_mvc  = feedback_long_df %>% filter(activity == "mvc")
+
+glimpse(feedback_long_df_mvc)
+```
+
+
+```{r}
+feedback_long_df_mvc = feedback_long_df_mvc %>% mutate_at(vars(id, gender, feedback), factor) %>% mutate_at("time",  as.integer)
 ```
 
 let's take a look:
 
 ```{r}
-feedback_long_df %>% group_by(id, feedback) %>%
+feedback_long_df_mvc %>% group_by(id, feedback) %>%
   summarise(mean_per = mean(performance)) %>%
   ggplot(aes(x=feedback , y=mean_per, color = feedback)) +
   geom_boxplot() + theme(legend.position = "") +
@@ -574,7 +597,7 @@ feedback_long_df %>% group_by(id, feedback) %>%
 ```
 
 ```{r}
-feedback_long_df %>% 
+feedback_long_df_mvc %>% 
   ggplot(aes(x=feedback , y=performance, color = feedback)) +
   geom_boxplot() + theme(legend.position = "") +
   labs(title = "Boxplots of Relative Performance by Feedback" , y = "Relative Performance")
@@ -584,7 +607,7 @@ feedback_long_df %>%
 
 
 ```{r}
-feedback_long_df %>% group_by(id, feedback, gender) %>%
+feedback_long_df_mvc %>% group_by(id, feedback, gender) %>%
   summarise(mean_per = mean(performance)) %>%
   ggplot(aes(x=feedback , y=mean_per, color = gender)) +
   geom_boxplot() +
@@ -592,25 +615,17 @@ feedback_long_df %>% group_by(id, feedback, gender) %>%
 ```
 
 ```{r}
-feedback_long_df %>% 
+feedback_long_df_mvc %>% 
   ggplot(aes(x=feedback , y=performance, color = gender)) +
   geom_boxplot() +
   labs(title = "Boxplots of  Relative Performance by Feedback" , y = " Relative Performance")
 ```
 
-```{r}
-# feedback_long_df %>% group_by(feedback, time) %>% summarise(mean_perf = mean(performance) %>%)
-#   ggplot(aes(x=factor(time) , y=performance, color = id, group = id)) +
-#   geom_point() + 
-#   geom_line() + 
-#   labs(title = "Boxplots of Average Relative Performance by Feedback" , y = "Average Relative Performance")
-```
-
 
 
 
 ```{r}
-feedback_long_df %>% group_by(feedback, time) %>% summarise(mean_perf = mean(performance)) %>%
+feedback_long_df_mvc %>% group_by(feedback, time) %>% summarise(mean_perf = mean(performance)) %>%
   ggplot(aes(x=factor(time) , y=mean_perf, color = feedback, group = feedback)) +
   geom_point() + 
   geom_line(alpha=.5, size = 1.5) + 
@@ -619,7 +634,7 @@ feedback_long_df %>% group_by(feedback, time) %>% summarise(mean_perf = mean(per
 ```
 
 ```{r}
-feedback_long_df %>% group_by(feedback, time, gender) %>% summarise(mean_perf = mean(performance)) %>%
+feedback_long_df_mvc %>% group_by(feedback, time, gender) %>% summarise(mean_perf = mean(performance)) %>%
   ggplot(aes(x=factor(time) , y=mean_perf, color = feedback, group = feedback)) +
   geom_point() + 
   geom_line(alpha=.5, size = 1.5) + 
@@ -637,32 +652,32 @@ feedback_long_df %>% group_by(feedback, time, gender) %>% summarise(mean_perf = 
 #### Fixed Effect ANOVA
 
 ```{r}
-fe.fit.1 = aov(performance ~ feedback, data = feedback_long_df)
+fe.fit.1 = aov(performance ~ feedback, data = feedback_long_df_mvc)
 anova(fe.fit.1)
 
 ```
 
 ```{r}
-fe.fit.2 = aov(performance ~ feedback + gender , data = feedback_long_df)
+fe.fit.2 = aov(performance ~ feedback + gender , data = feedback_long_df_mvc)
 anova(fe.fit.2)
 ```
 
 **Interaction**
 
 ```{r}
-ggplot(feedback_long_df, aes(x = gender, y = performance, group = feedback, col = feedback)) + 
+ggplot(feedback_long_df_mvc, aes(x = gender, y = performance, group = feedback, col = feedback)) + 
    stat_summary(fun.y = mean, geom = "line", size = 1.5) +
   labs(x= "Gender", y="Relative Performance")
 ```
 
 ```{r}
-ggplot(feedback_long_df, aes(x = feedback, y = performance, group = gender, col = gender)) + 
+ggplot(feedback_long_df_mvc, aes(x = feedback, y = performance, group = gender, col = gender)) + 
    stat_summary(fun.y = mean, geom = "line", size = 1.5) +
   labs(x= "Feedback", y="Relative Performance")
 ```
 
 ```{r}
-fe.fit.3 = aov(performance ~ feedback * gender , data = feedback_long_df)
+fe.fit.3 = aov(performance ~ feedback * gender , data = feedback_long_df_mvc)
 anova(fe.fit.3)
 ```
 
@@ -678,7 +693,7 @@ library("lmerTest")
 let's filter only control group: feedback == "no feedback" 
 
 ```{r}
-nofeed_df =  feedback_long_df[(feedback_long_df$feedback=="no feedback"),]
+nofeed_df =  feedback_long_df_mvc[(feedback_long_df_mvc$feedback=="no feedback"),]
 
 feed_fit.1 =lmer(performance ~  (1 | id) , data = nofeed_df )
 ```
@@ -771,7 +786,7 @@ qq_plot_ref(feed_fit.2)
 ##### **Option 2**
 
 ```{r}
-feed_fit.3 = lmer(performance ~ feedback +  (1 | id) , data = feedback_long_df)
+feed_fit.3 = lmer(performance ~ feedback +  (1 | id) , data = feedback_long_df_mvc)
 anova(feed_fit.3)
 summary(feed_fit.3)
 ```
@@ -796,7 +811,7 @@ qq_plot_ref(feed_fit.3)
 
 
 ```{r}
-feed_fit.4 = lmer(performance ~ feedback + gender + feedback * gender  + (1 | id) , data = feedback_long_df)
+feed_fit.4 = lmer(performance ~ feedback + gender + feedback * gender  + (1 | id) , data = feedback_long_df_mvc)
 anova(feed_fit.4)
 summary(feed_fit.4)
 ```
