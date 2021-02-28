@@ -272,6 +272,16 @@ plot(diet.aov2)
 
 
 
+
+**F tests:**
+```{r}
+diet.aov = aov(weight_loss~Diet,data=diet[!is.na(diet$gender),] )
+anova( diet.aov, diet.aov2)
+```
+
+
+
+
 ## Intercations
 
 ```{r}
@@ -294,6 +304,25 @@ interaction.plot(x.factor = diet$Diet,
 ```{r two-way with interaction checking assumptions }
 plot(diet.aov2_intr)
 ```
+
+
+**Levin's test**
+
+```{r, warning=F}
+diet = diet[!is.na(diet$gender),]
+groups_df = cbind ( expand.grid(Diet = unique(diet$Diet),gender =  unique(diet$gender)), group = factor(1:6))
+diet2 = inner_join(diet ,groups_df, by = c("Diet", "gender") )
+
+# option 1 
+lawstat::levene.test(y = diet2$weight_loss, group = diet2$group , location = "mean" )
+
+# option 2 
+DescTools::LeveneTest(weight_loss ~ Diet * factor(gender)  ,data=diet )
+
+```
+
+
+
 
 
 # Interaction Plots Examples
@@ -406,7 +435,7 @@ str(Ricci)
 
 
 
-```{r ricci: boxplot of score by race}
+```{r ricci boxplot of score by race}
 ggplot(data = Ricci, 
        aes(x=Race, y= Combine, color=Position)) +
   geom_boxplot(outlier.colour="red", outlier.shape=8,outlier.size=3) +
@@ -437,7 +466,7 @@ ricci_capt_ci_tukey = confint(ricci_capt_tukey)
 ricci_capt_ci_tukey
 ```
 
-```{r ricci option 1: tukey cis}
+```{r ricci option 1 tukey cis}
 plot(ricci_capt_ci_tukey, xlab = "score diff")
 ```
 
@@ -459,7 +488,7 @@ ricci_lie_ci_tukey
 ```
 
 
-```{r ricci option 2: tukey cis}
+```{r ricci option 2 tukey cis}
 plot(ricci_lie_ci_tukey, xlab = "score diff")
 ```
 
@@ -471,7 +500,7 @@ summary(aov(Combine  ~ Race*Position , data = Ricci))
 ```
 
 
-```{r ricci: two way anova interaction plot}
+```{r ricci two way anova interaction plot}
 # interaction plot 
 interaction.plot(x.factor = Ricci$Race,
                  trace.factor = Ricci$Position, 
@@ -484,7 +513,7 @@ interaction.plot(x.factor = Ricci$Race,
 ```
 
 
-```{r ricci: two way anova interaction plot2}
+```{r ricci two way anova interaction plot2}
 interaction.plot(x.factor = Ricci$Position,
                  trace.factor = Ricci$Race, 
                  response = Ricci$Combine,
@@ -589,7 +618,7 @@ feedback_long_df_mvc = feedback_long_df_mvc %>% mutate_at(vars(id, gender, feedb
 
 let's take a look:
 
-```{r Feedback: Boxplots of Average Relative Performance by Feedback}
+```{r}
 feedback_long_df_mvc %>% group_by(id, feedback) %>%
   summarise(mean_per = mean(performance)) %>%
   ggplot(aes(x=feedback , y=mean_per, color = feedback)) +
@@ -597,7 +626,7 @@ feedback_long_df_mvc %>% group_by(id, feedback) %>%
   labs(title = "Boxplots of Average Relative Performance by Feedback" , y = "Average Relative Performance")
 ```
 
-```{r Feedback: Boxplots of Relative Performance by Feedback}
+```{r}
 feedback_long_df_mvc %>% 
   ggplot(aes(x=feedback , y=performance, color = feedback)) +
   geom_boxplot() + theme(legend.position = "") +
@@ -607,7 +636,7 @@ feedback_long_df_mvc %>%
 
 
 
-```{r Feedback: Boxplots of Average Relative Performance by Feedback and gender}
+```{r}
 feedback_long_df_mvc %>% group_by(id, feedback, gender) %>%
   summarise(mean_per = mean(performance)) %>%
   ggplot(aes(x=feedback , y=mean_per, color = gender)) +
@@ -615,7 +644,7 @@ feedback_long_df_mvc %>% group_by(id, feedback, gender) %>%
   labs(title = "Boxplots of Average Relative Performance by Feedback" , y = "Average Relative Performance")
 ```
 
-```{r Feedback: Boxplots of  Relative Performance by Feedback}
+```{r}
 feedback_long_df_mvc %>% 
   ggplot(aes(x=feedback , y=performance, color = gender)) +
   geom_boxplot() +
@@ -625,7 +654,7 @@ feedback_long_df_mvc %>%
 
 
 
-```{r Feedback:Average Relative Performance by Feedback and Time2}
+```{r}
 feedback_long_df_mvc %>% group_by(feedback, time) %>% summarise(mean_perf = mean(performance)) %>%
   ggplot(aes(x=factor(time) , y=mean_perf, color = feedback, group = feedback)) +
   geom_point() + 
@@ -634,7 +663,7 @@ feedback_long_df_mvc %>% group_by(feedback, time) %>% summarise(mean_perf = mean
        x = "Repetitions" , y = "Average Relative Performance")
 ```
 
-```{r Feedback:Average Relative Performance by Feedback and Time}
+```{r}
 feedback_long_df_mvc %>% group_by(feedback, time, gender) %>% summarise(mean_perf = mean(performance)) %>%
   ggplot(aes(x=factor(time) , y=mean_perf, color = feedback, group = feedback)) +
   geom_point() + 
@@ -665,13 +694,13 @@ anova(fe.fit.2)
 
 **Interaction**
 
-```{r Feedback: interation plot gender and feedback}
+```{r}
 ggplot(feedback_long_df_mvc, aes(x = gender, y = performance, group = feedback, col = feedback)) + 
    stat_summary(fun.y = mean, geom = "line", size = 1.5) +
   labs(x= "Gender", y="Relative Performance")
 ```
 
-```{r Feedback: interation plot gender and feedback2}
+```{r}
 ggplot(feedback_long_df_mvc, aes(x = feedback, y = performance, group = gender, col = gender)) + 
    stat_summary(fun.y = mean, geom = "line", size = 1.5) +
   labs(x= "Feedback", y="Relative Performance")
