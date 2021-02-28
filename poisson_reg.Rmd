@@ -1,0 +1,296 @@
+---
+title: "Poisson Regression"
+author: "May Ben-Hamo"
+output: 
+  html_document:
+    self_contained: false
+    toc: true
+    toc_float: true
+    toc_depth: 4
+    keep_tex: yes
+    theme: united
+    highlight: tango
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, warning=F , message=F}
+library(tidyverse)
+library(ggplot2)
+```
+
+
+# New York City - East River Bicycle Crossings
+
+Daily bicycle counts for major bridges in NYC
+
+The New York City Department of Transportation collects daily data about the number of bicycles going over bridges in New York City. This data is used to measure bike utilization as a part of transportation planning. This dataset is a daily record of the number of bicycles crossing into or out of Manhattan via one of the East River bridges (that is, excluding Bronx thruways and the non-bikeable Hudson River tunnels) for a stretch of 9 months from 2016
+
+**Source**  https://data.cityofnewyork.us/Transportation/Bicycle-Counts-for-East-River-Bridges/gua4-p9wg 
+
+**Format**
+
+
+- `Date`- 	Identifies the month and day the Bicycle counts was taken. 
+- `Day`	Identifies the day of the week.
+- `High Temp` (°F)	Identifies the high temperature of the day in Fahrenheit.
+- `Low Temp` (°F)	Identifies the low temperature of the day in Fahrenheit.
+- `Precipitation`	Identifies the amount of rain received on this day in inches. 
+- `Brooklyn Bridge`	Identifies an East River Bridge crossing between Manhattan and Brooklyn where a bicycle count is taken. 
+- `Manhattan Bridge`	Identifies an East River Bridge crossing between Manhattan and Brooklyn where a bicycle count is taken.
+- `Williamsburg Bridge`	Identifies an East River Bridge crossing between Manhattan and Brooklyn where a bicycle count is taken.
+- `Queensboro Bridge`	Identifies an East River Bridge crossing between Manhattan and Queens where a bicycle count is taken.
+- `Total`	Identifies the total counts of bicycle crossing over East River Bridges in a day. 
+
+## Read & Arrange
+
+```{r}
+bikes_df = read_csv("datasets/bikes/bikes_combined.csv")
+```
+
+
+```{r}
+# lets clean col names:
+bikes_df = bikes_df %>% rename_all(janitor::make_clean_names) %>%
+  mutate_at("date", lubridate::as_date,format =  "%m/%d/%Y", tz = "")
+
+# let's add month, year, day
+bikes_df = bikes_df %>% mutate(
+  month =  format(date, format = "%m", usetz = FALSE),
+  year =  format(date, format = "%Y", usetz = FALSE)
+  ) %>% mutate_at(vars(month, year, day) , as.factor) %>%
+  mutate(weekday = fct_relevel(day,  "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")) %>%
+  mutate(precipitation = as.numeric( str_replace(precipitation,"\\(S\\)", "" )))
+
+bikes_df = bikes_df %>% rename("high_temp_f" = "high_temp_u_fffd_f","low_temp_f" = "low_temp_u_fffd_f" )
+```
+
+
+## Descriptive Statistics
+
+
+```{r}
+str(bikes_df)
+```
+
+
+
+```{r}
+hist_by_day = function(colname, title) {
+  bikes_df %>%
+  ggplot(aes(x=weekday, y= {{colname}}, color = weekday)) +
+  geom_boxplot() + theme(legend.position = "",
+                         axis.text.x = element_text(angle=20, hjust=1, size = 8),
+                        text = element_text(size=8) , 
+                        plot.title = element_text(size = 15)) + 
+    labs(title = title)  
+}
+
+p1 = hist_by_day(total, "Total")
+p2 = hist_by_day(brooklyn_bridge, "Brooklyn Bridge")
+p3 = hist_by_day(manhattan_bridge, "Manhattan Bridge")
+p4 = hist_by_day(williamsburg_bridge, "Williamsburg Bridge")
+
+gridExtra::grid.arrange(p1, p2 , p3 ,p4)
+```
+
+
+```{r}
+hist_by_month = function(colname, title) {
+  bikes_df %>%
+  ggplot(aes(x=month, y= {{colname}},color = month)) +
+  geom_boxplot() + theme(legend.position = "",
+                         axis.text.x = element_text( size = 8),
+                        text = element_text(size=8) , 
+                        plot.title = element_text(size = 15)) + 
+    labs(title = title)  
+}
+
+p1 = hist_by_month(total, "Total")
+p2 = hist_by_month(brooklyn_bridge, "Brooklyn Bridge")
+p3 = hist_by_month(manhattan_bridge, "Manhattan Bridge")
+p4 = hist_by_month(williamsburg_bridge, "Williamsburg Bridge")
+
+gridExtra::grid.arrange(p1, p2 , p3 ,p4)
+```
+
+
+
+```{r}
+bikes_df %>% 
+  ggplot(aes(x= high_temp_f, y= total)) +
+  geom_point() +
+  geom_smooth(method = 'glm',  method.args = list(family = "poisson"))
+
+bikes_df %>% 
+  ggplot(aes(x= high_temp_f, y= log(total))) +
+  geom_point() 
+
+bikes_df %>% 
+  ggplot(aes(x= high_temp_f, y= total, color = month)) +
+  geom_point() +
+  geom_smooth(method = 'glm',  method.args = list(family = "poisson"))
+
+bikes_df %>% 
+  ggplot(aes(x= low_temp_f , y= total)) +
+  geom_point() +
+  geom_smooth(method = 'glm',  method.args = list(family = "poisson"))
+
+bikes_df %>% 
+  ggplot(aes(x= low_temp_f , y= total, color = month)) +
+  geom_point() +
+  geom_smooth(method = 'glm',  method.args = list(family = "poisson"))
+
+
+bikes_df %>% 
+  ggplot(aes(x= precipitation , y= total)) +
+  geom_point() +
+  geom_smooth(method = 'glm',  method.args = list(family = "poisson"))
+
+
+```
+
+
+## Fitting Poisson Regression
+
+```{r}
+fit_1 = glm(total ~ high_temp_f , data = bikes_df, family = 'poisson')
+summary(fit_1)
+```
+
+
+```{r}
+fit_2 = glm(total ~ high_temp_f+ weekday , data = bikes_df, family = 'poisson')
+summary(fit_2)
+```
+
+```{r}
+fit_3 = glm(total ~ high_temp_f + weekday + month, data = bikes_df, family = 'poisson')
+summary(fit_3)
+```
+
+```{r}
+fit_4 = glm(total ~ high_temp_f + weekday + month + precipitation , data = bikes_df, family = 'poisson')
+summary(fit_4)
+```
+
+```{r}
+fit_5 = glm(total ~ high_temp_f + weekday + month + precipitation + low_temp_f , data = bikes_df, family = 'poisson')
+summary(fit_5)
+```
+
+
+```{r}
+fit_6 = glm(total ~ high_temp_f + weekday * month, data = bikes_df, family = 'poisson')
+summary(fit_6)
+```
+
+
+```{r}
+fit_7 = glm(total ~ high_temp_f + low_temp_f + weekday , data = bikes_df, family = 'poisson')
+summary(fit_7)
+```
+
+
+
+```{r}
+fit_8 = glm(total ~ high_temp_f + weekday + low_temp_f +  precipitation , data = bikes_df, family = 'poisson')
+summary(fit_8)
+
+```
+
+
+# Offset Example
+
+**Description** 
+
+The data given in data frame Insurance consist of the numbers of policyholders of an insurance company who were exposed to risk, and the numbers of car insurance claims made by those policyholders in the third quarter of 1973.
+
+**Format**
+ 
+This data frame contains the following columns:
+
+- `District` factor: district of residence of policyholder (1 to 4): 4 is major cities.
+- `Group` an ordered factor: group of car with levels <1 litre, 1–1.5 litre, 1.5–2 litre, >2 litre.
+- `Age` an ordered factor: the age of the insured in 4 groups labelled <25, 25–29, 30–35, >35.
+- `Holders` numbers of policyholders.
+- `Claims` numbers of claims
+
+**Source**
+
+L. A. Baxter, S. M. Coutts and G. A. F. Ross (1980) Applications of linear models in motor insurance. Proceedings of the 21st International Congress of Actuaries, Zurich pp. 11–29.
+
+M. Aitkin, D. Anderson, B. Francis and J. Hinde (1989) Statistical Modelling in GLIM. Oxford
+University Press.
+
+
+
+```{r, warning=F, message=F}
+library(MASS)
+data(Insurance )
+```
+
+```{r}
+head(Insurance)
+
+Insurance = Insurance %>% rename_all(janitor::make_clean_names)
+```
+
+
+```{r}
+str(Insurance)
+```
+
+```{r}
+Insurance = Insurance %>% mutate(rate = claims/holders ) 
+```
+
+
+```{r}
+Insurance %>% ggplot(aes(x=age, y = rate, fill = age   )) + 
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Pastel1") +
+  geom_jitter( position=position_jitter(w=0.1,h=0.1) )
+
+Insurance %>% ggplot(aes(x=group, y = rate, fill = group   )) + 
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Pastel1") + 
+  geom_jitter( position=position_jitter(w=0.1,h=0.1) )
+
+Insurance %>% ggplot(aes(x=district, y = rate, fill = district)) + 
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Pastel1") + 
+  geom_jitter( position=position_jitter(w=0.1,h=0.1) )
+
+```
+
+
+```{r}
+Insurance %>% ggplot(aes(x=age, y = rate , fill = group    )) + 
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Pastel1")
+```
+
+
+```{r}
+fit_offset <- glm(claims ~  group + age ,  offset = log(holders ),
+    data = Insurance, family = 'poisson')
+summary(fit_offset)
+```
+
+
+```{r}
+fit_offset2 <- glm(claims ~  group * age ,  offset = log(holders ),
+    data = Insurance, family = 'poisson')
+summary(fit_offset2)
+```
+
+```{r}
+fit_offset <- glm(claims ~ district + group + age ,  offset = log(holders ),
+    data = Insurance, family = 'poisson')
+summary(fit_offset)
+```
+

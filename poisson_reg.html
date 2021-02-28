@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="May Ben-Hamo" />
+
+
+<title>Poisson Regression</title>
+
+<script src="poisson_reg_files/header-attrs-2.1/header-attrs.js"></script>
+<script src="poisson_reg_files/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="poisson_reg_files/bootstrap-3.3.5/css/united.min.css" rel="stylesheet" />
+<script src="poisson_reg_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="poisson_reg_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="poisson_reg_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="poisson_reg_files/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="poisson_reg_files/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="poisson_reg_files/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="poisson_reg_files/navigation-1.1/tabsets.js"></script>
+<link href="poisson_reg_files/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="poisson_reg_files/pagedtable-1.1/js/pagedtable.js"></script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #c4a000; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #000000; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #000000; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #000000; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Poisson Regression</h1>
+<h4 class="author">May Ben-Hamo</h4>
+
+</div>
+
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span></code></pre></div>
+<div id="new-york-city---east-river-bicycle-crossings" class="section level1">
+<h1>New York City - East River Bicycle Crossings</h1>
+<p>Daily bicycle counts for major bridges in NYC</p>
+<p>The New York City Department of Transportation collects daily data about the number of bicycles going over bridges in New York City. This data is used to measure bike utilization as a part of transportation planning. This dataset is a daily record of the number of bicycles crossing into or out of Manhattan via one of the East River bridges (that is, excluding Bronx thruways and the non-bikeable Hudson River tunnels) for a stretch of 9 months from 2016</p>
+<p><strong>Source</strong> <a href="https://data.cityofnewyork.us/Transportation/Bicycle-Counts-for-East-River-Bridges/gua4-p9wg" class="uri">https://data.cityofnewyork.us/Transportation/Bicycle-Counts-for-East-River-Bridges/gua4-p9wg</a></p>
+<p><strong>Format</strong></p>
+<ul>
+<li><code>Date</code>- Identifies the month and day the Bicycle counts was taken.</li>
+<li><code>Day</code> Identifies the day of the week.</li>
+<li><code>High Temp</code> (°F) Identifies the high temperature of the day in Fahrenheit.</li>
+<li><code>Low Temp</code> (°F) Identifies the low temperature of the day in Fahrenheit.</li>
+<li><code>Precipitation</code> Identifies the amount of rain received on this day in inches.</li>
+<li><code>Brooklyn Bridge</code> Identifies an East River Bridge crossing between Manhattan and Brooklyn where a bicycle count is taken.</li>
+<li><code>Manhattan Bridge</code> Identifies an East River Bridge crossing between Manhattan and Brooklyn where a bicycle count is taken.</li>
+<li><code>Williamsburg Bridge</code> Identifies an East River Bridge crossing between Manhattan and Brooklyn where a bicycle count is taken.</li>
+<li><code>Queensboro Bridge</code> Identifies an East River Bridge crossing between Manhattan and Queens where a bicycle count is taken.</li>
+<li><code>Total</code> Identifies the total counts of bicycle crossing over East River Bridges in a day.</li>
+</ul>
+<div id="read-arrange" class="section level2">
+<h2>Read &amp; Arrange</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>bikes_df <span class="ot">=</span> <span class="fu">read_csv</span>(<span class="st">&quot;datasets/bikes/bikes_combined.csv&quot;</span>)</span></code></pre></div>
+<pre><code>## Parsed with column specification:
+## cols(
+##   Date = col_character(),
+##   Day = col_character(),
+##   `High Temp (&lt;c1&gt;F)` = col_double(),
+##   `Low Temp (&lt;c1&gt;F)` = col_double(),
+##   Precipitation = col_character(),
+##   `Brooklyn Bridge` = col_number(),
+##   `Manhattan Bridge` = col_number(),
+##   `Williamsburg Bridge` = col_number(),
+##   `Queensboro Bridge` = col_number(),
+##   Total = col_number()
+## )</code></pre>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># lets clean col names:</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>bikes_df <span class="ot">=</span> bikes_df <span class="sc">%&gt;%</span> <span class="fu">rename_all</span>(janitor<span class="sc">::</span>make_clean_names) <span class="sc">%&gt;%</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_at</span>(<span class="st">&quot;date&quot;</span>, lubridate<span class="sc">::</span>as_date,<span class="at">format =</span>  <span class="st">&quot;%m/%d/%Y&quot;</span>, <span class="at">tz =</span> <span class="st">&quot;&quot;</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># let&#39;s add month, year, day</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>bikes_df <span class="ot">=</span> bikes_df <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">month =</span>  <span class="fu">format</span>(date, <span class="at">format =</span> <span class="st">&quot;%m&quot;</span>, <span class="at">usetz =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">year =</span>  <span class="fu">format</span>(date, <span class="at">format =</span> <span class="st">&quot;%Y&quot;</span>, <span class="at">usetz =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> <span class="fu">mutate_at</span>(<span class="fu">vars</span>(month, year, day) , as.factor) <span class="sc">%&gt;%</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">weekday =</span> <span class="fu">fct_relevel</span>(day,  <span class="st">&quot;Monday&quot;</span>, <span class="st">&quot;Tuesday&quot;</span>, <span class="st">&quot;Wednesday&quot;</span>, <span class="st">&quot;Thursday&quot;</span>, <span class="st">&quot;Friday&quot;</span>, <span class="st">&quot;Saturday&quot;</span>, <span class="st">&quot;Sunday&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">precipitation =</span> <span class="fu">as.numeric</span>( <span class="fu">str_replace</span>(precipitation,<span class="st">&quot;</span><span class="sc">\\</span><span class="st">(S</span><span class="sc">\\</span><span class="st">)&quot;</span>, <span class="st">&quot;&quot;</span> )))</span></code></pre></div>
+<pre><code>## Warning: NAs introduced by coercion</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>bikes_df <span class="ot">=</span> bikes_df <span class="sc">%&gt;%</span> <span class="fu">rename</span>(<span class="st">&quot;high_temp_f&quot;</span> <span class="ot">=</span> <span class="st">&quot;high_temp_u_fffd_f&quot;</span>,<span class="st">&quot;low_temp_f&quot;</span> <span class="ot">=</span> <span class="st">&quot;low_temp_u_fffd_f&quot;</span> )</span></code></pre></div>
+</div>
+<div id="descriptive-statistics" class="section level2">
+<h2>Descriptive Statistics</h2>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(bikes_df)</span></code></pre></div>
+<pre><code>## Classes &#39;spec_tbl_df&#39;, &#39;tbl_df&#39;, &#39;tbl&#39; and &#39;data.frame&#39;: 214 obs. of  13 variables:
+##  $ date               : Date, format: &quot;2016-04-01&quot; &quot;2016-04-02&quot; ...
+##  $ day                : Factor w/ 7 levels &quot;Friday&quot;,&quot;Monday&quot;,..: 1 3 4 2 6 7 5 1 3 4 ...
+##  $ high_temp_f        : num  78.1 55 39.9 44.1 42.1 45 57 46.9 43 48.9 ...
+##  $ low_temp_f         : num  66 48.9 34 33.1 26.1 30 53.1 44.1 37.9 30.9 ...
+##  $ precipitation      : num  0.01 0.15 0.09 0.47 0 0 0.09 0.01 0.09 0 ...
+##  $ brooklyn_bridge    : num  1704 827 526 521 1416 ...
+##  $ manhattan_bridge   : num  3126 1646 1232 1067 2617 ...
+##  $ williamsburg_bridge: num  4115 2565 1695 1440 3081 ...
+##  $ queensboro_bridge  : num  2552 1884 1306 1307 2357 ...
+##  $ total              : num  11497 6922 4759 4335 9471 ...
+##  $ month              : Factor w/ 7 levels &quot;04&quot;,&quot;05&quot;,&quot;06&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ year               : Factor w/ 1 level &quot;2016&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ weekday            : Factor w/ 7 levels &quot;Monday&quot;,&quot;Tuesday&quot;,..: 5 6 7 1 2 3 4 5 6 7 ...</code></pre>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>hist_by_day <span class="ot">=</span> <span class="cf">function</span>(colname, title) {</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  bikes_df <span class="sc">%&gt;%</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>weekday, <span class="at">y=</span> {{colname}}, <span class="at">color =</span> weekday)) <span class="sc">+</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;&quot;</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>                         <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle=</span><span class="dv">20</span>, <span class="at">hjust=</span><span class="dv">1</span>, <span class="at">size =</span> <span class="dv">8</span>),</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>                        <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">8</span>) , </span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>                        <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">15</span>)) <span class="sc">+</span> </span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> title)  </span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">=</span> <span class="fu">hist_by_day</span>(total, <span class="st">&quot;Total&quot;</span>)</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">=</span> <span class="fu">hist_by_day</span>(brooklyn_bridge, <span class="st">&quot;Brooklyn Bridge&quot;</span>)</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">=</span> <span class="fu">hist_by_day</span>(manhattan_bridge, <span class="st">&quot;Manhattan Bridge&quot;</span>)</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>p4 <span class="ot">=</span> <span class="fu">hist_by_day</span>(williamsburg_bridge, <span class="st">&quot;Williamsburg Bridge&quot;</span>)</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>gridExtra<span class="sc">::</span><span class="fu">grid.arrange</span>(p1, p2 , p3 ,p4)</span></code></pre></div>
+<p><img src="poisson_reg_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>hist_by_month <span class="ot">=</span> <span class="cf">function</span>(colname, title) {</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  bikes_df <span class="sc">%&gt;%</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>month, <span class="at">y=</span> {{colname}},<span class="at">color =</span> month)) <span class="sc">+</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;&quot;</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>                         <span class="at">axis.text.x =</span> <span class="fu">element_text</span>( <span class="at">size =</span> <span class="dv">8</span>),</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>                        <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">8</span>) , </span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>                        <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">15</span>)) <span class="sc">+</span> </span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> title)  </span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">=</span> <span class="fu">hist_by_month</span>(total, <span class="st">&quot;Total&quot;</span>)</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">=</span> <span class="fu">hist_by_month</span>(brooklyn_bridge, <span class="st">&quot;Brooklyn Bridge&quot;</span>)</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">=</span> <span class="fu">hist_by_month</span>(manhattan_bridge, <span class="st">&quot;Manhattan Bridge&quot;</span>)</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>p4 <span class="ot">=</span> <span class="fu">hist_by_month</span>(williamsburg_bridge, <span class="st">&quot;Williamsburg Bridge&quot;</span>)</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>gridExtra<span class="sc">::</span><span class="fu">grid.arrange</span>(p1, p2 , p3 ,p4)</span></code></pre></div>
+<p><img src="poisson_reg_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>bikes_df <span class="sc">%&gt;%</span> </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span> high_temp_f, <span class="at">y=</span> total)) <span class="sc">+</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&#39;glm&#39;</span>,  <span class="at">method.args =</span> <span class="fu">list</span>(<span class="at">family =</span> <span class="st">&quot;poisson&quot;</span>))</span></code></pre></div>
+<p><img src="poisson_reg_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>bikes_df <span class="sc">%&gt;%</span> </span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span> high_temp_f, <span class="at">y=</span> <span class="fu">log</span>(total))) <span class="sc">+</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() </span></code></pre></div>
+<p><img src="poisson_reg_files/figure-html/unnamed-chunk-7-2.png" width="672" /></p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>bikes_df <span class="sc">%&gt;%</span> </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span> high_temp_f, <span class="at">y=</span> total, <span class="at">color =</span> month)) <span class="sc">+</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&#39;glm&#39;</span>,  <span class="at">method.args =</span> <span class="fu">list</span>(<span class="at">family =</span> <span class="st">&quot;poisson&quot;</span>))</span></code></pre></div>
+<p><img src="poisson_reg_files/figure-html/unnamed-chunk-7-3.png" width="672" /></p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>bikes_df <span class="sc">%&gt;%</span> </span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span> low_temp_f , <span class="at">y=</span> total)) <span class="sc">+</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&#39;glm&#39;</span>,  <span class="at">method.args =</span> <span class="fu">list</span>(<span class="at">family =</span> <span class="st">&quot;poisson&quot;</span>))</span></code></pre></div>
+<p><img src="poisson_reg_files/figure-html/unnamed-chunk-7-4.png" width="672" /></p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>bikes_df <span class="sc">%&gt;%</span> </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span> low_temp_f , <span class="at">y=</span> total, <span class="at">color =</span> month)) <span class="sc">+</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&#39;glm&#39;</span>,  <span class="at">method.args =</span> <span class="fu">list</span>(<span class="at">family =</span> <span class="st">&quot;poisson&quot;</span>))</span></code></pre></div>
+<p><img src="poisson_reg_files/figure-html/unnamed-chunk-7-5.png" width="672" /></p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>bikes_df <span class="sc">%&gt;%</span> </span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span> precipitation , <span class="at">y=</span> total)) <span class="sc">+</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&#39;glm&#39;</span>,  <span class="at">method.args =</span> <span class="fu">list</span>(<span class="at">family =</span> <span class="st">&quot;poisson&quot;</span>))</span></code></pre></div>
+<pre><code>## Warning: Removed 18 rows containing non-finite values (stat_smooth).</code></pre>
+<pre><code>## Warning: Removed 18 rows containing missing values (geom_point).</code></pre>
+<p><img src="poisson_reg_files/figure-html/unnamed-chunk-7-6.png" width="672" /></p>
+</div>
+<div id="fitting-poisson-regression" class="section level2">
+<h2>Fitting Poisson Regression</h2>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>fit_1 <span class="ot">=</span> <span class="fu">glm</span>(total <span class="sc">~</span> high_temp_f , <span class="at">data =</span> bikes_df, <span class="at">family =</span> <span class="st">&#39;poisson&#39;</span>)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_1)</span></code></pre></div>
+<pre><code>## 
+## Call:
+## glm(formula = total ~ high_temp_f, family = &quot;poisson&quot;, data = bikes_df)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -88.761  -27.451    3.115   30.225   59.700  
+## 
+## Coefficients:
+##              Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept) 8.687e+00  3.344e-03    2598   &lt;2e-16 ***
+## high_temp_f 1.500e-02  4.286e-05     350   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for poisson family taken to be 1)
+## 
+##     Null deviance: 415443  on 213  degrees of freedom
+## Residual deviance: 287117  on 212  degrees of freedom
+## AIC: 289604
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>fit_2 <span class="ot">=</span> <span class="fu">glm</span>(total <span class="sc">~</span> high_temp_f<span class="sc">+</span> weekday , <span class="at">data =</span> bikes_df, <span class="at">family =</span> <span class="st">&#39;poisson&#39;</span>)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_2)</span></code></pre></div>
+<pre><code>## 
+## Call:
+## glm(formula = total ~ high_temp_f + weekday, family = &quot;poisson&quot;, 
+##     data = bikes_df)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -81.668  -19.394    5.679   20.677   51.449  
+## 
+## Coefficients:
+##                    Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)       8.757e+00  3.565e-03 2456.45   &lt;2e-16 ***
+## high_temp_f       1.466e-02  4.317e-05  339.52   &lt;2e-16 ***
+## weekdayTuesday    8.166e-02  1.808e-03   45.17   &lt;2e-16 ***
+## weekdayWednesday  1.342e-01  1.775e-03   75.62   &lt;2e-16 ***
+## weekdayThursday   5.655e-02  1.808e-03   31.28   &lt;2e-16 ***
+## weekdayFriday    -7.628e-02  1.859e-03  -41.03   &lt;2e-16 ***
+## weekdaySaturday  -2.522e-01  1.953e-03 -129.15   &lt;2e-16 ***
+## weekdaySunday    -3.316e-01  2.004e-03 -165.47   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for poisson family taken to be 1)
+## 
+##     Null deviance: 415443  on 213  degrees of freedom
+## Residual deviance: 189309  on 206  degrees of freedom
+## AIC: 191808
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>fit_3 <span class="ot">=</span> <span class="fu">glm</span>(total <span class="sc">~</span> high_temp_f <span class="sc">+</span> weekday <span class="sc">+</span> month, <span class="at">data =</span> bikes_df, <span class="at">family =</span> <span class="st">&#39;poisson&#39;</span>)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_3)</span></code></pre></div>
+<pre><code>## 
+## Call:
+## glm(formula = total ~ high_temp_f + weekday + month, family = &quot;poisson&quot;, 
+##     data = bikes_df)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -81.825  -17.270    3.656   19.656   48.867  
+## 
+## Coefficients:
+##                    Estimate Std. Error  z value Pr(&gt;|z|)    
+## (Intercept)       8.591e+00  4.412e-03 1947.035   &lt;2e-16 ***
+## high_temp_f       1.695e-02  6.329e-05  267.802   &lt;2e-16 ***
+## weekdayTuesday    8.442e-02  1.809e-03   46.656   &lt;2e-16 ***
+## weekdayWednesday  1.306e-01  1.777e-03   73.486   &lt;2e-16 ***
+## weekdayThursday   5.145e-02  1.810e-03   28.425   &lt;2e-16 ***
+## weekdayFriday    -7.425e-02  1.862e-03  -39.867   &lt;2e-16 ***
+## weekdaySaturday  -2.526e-01  1.954e-03 -129.281   &lt;2e-16 ***
+## weekdaySunday    -3.298e-01  2.005e-03 -164.483   &lt;2e-16 ***
+## month05          -1.852e-02  2.141e-03   -8.648   &lt;2e-16 ***
+## month06           7.331e-02  2.255e-03   32.514   &lt;2e-16 ***
+## month07          -1.048e-01  2.490e-03  -42.075   &lt;2e-16 ***
+## month08          -7.970e-02  2.460e-03  -32.395   &lt;2e-16 ***
+## month09           1.946e-02  2.252e-03    8.642   &lt;2e-16 ***
+## month10           6.631e-02  2.076e-03   31.939   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for poisson family taken to be 1)
+## 
+##     Null deviance: 415443  on 213  degrees of freedom
+## Residual deviance: 175386  on 200  degrees of freedom
+## AIC: 177897
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>fit_4 <span class="ot">=</span> <span class="fu">glm</span>(total <span class="sc">~</span> high_temp_f <span class="sc">+</span> weekday <span class="sc">+</span> month <span class="sc">+</span> precipitation , <span class="at">data =</span> bikes_df, <span class="at">family =</span> <span class="st">&#39;poisson&#39;</span>)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_4)</span></code></pre></div>
+<pre><code>## 
+## Call:
+## glm(formula = total ~ high_temp_f + weekday + month + precipitation, 
+##     family = &quot;poisson&quot;, data = bikes_df)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -59.727  -14.950    1.858   15.655   93.476  
+## 
+## Coefficients:
+##                    Estimate Std. Error  z value Pr(&gt;|z|)    
+## (Intercept)       8.744e+00  4.657e-03 1877.793  &lt; 2e-16 ***
+## high_temp_f       1.531e-02  6.702e-05  228.451  &lt; 2e-16 ***
+## weekdayTuesday    5.605e-02  1.922e-03   29.167  &lt; 2e-16 ***
+## weekdayWednesday  7.661e-02  1.850e-03   41.408  &lt; 2e-16 ***
+## weekdayThursday   3.122e-02  1.890e-03   16.518  &lt; 2e-16 ***
+## weekdayFriday    -7.997e-02  1.907e-03  -41.926  &lt; 2e-16 ***
+## weekdaySaturday  -2.888e-01  2.058e-03 -140.313  &lt; 2e-16 ***
+## weekdaySunday    -3.597e-01  2.102e-03 -171.107  &lt; 2e-16 ***
+## month05           1.746e-02  2.281e-03    7.655 1.93e-14 ***
+## month06           1.213e-01  2.351e-03   51.596  &lt; 2e-16 ***
+## month07           1.753e-02  2.670e-03    6.565 5.20e-11 ***
+## month08          -3.113e-02  2.587e-03  -12.036  &lt; 2e-16 ***
+## month09           8.289e-02  2.351e-03   35.256  &lt; 2e-16 ***
+## month10           9.384e-02  2.152e-03   43.613  &lt; 2e-16 ***
+## precipitation    -5.498e-01  2.552e-03 -215.444  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for poisson family taken to be 1)
+## 
+##     Null deviance: 402607  on 195  degrees of freedom
+## Residual deviance: 111818  on 181  degrees of freedom
+##   (18 observations deleted due to missingness)
+## AIC: 114122
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>fit_5 <span class="ot">=</span> <span class="fu">glm</span>(total <span class="sc">~</span> high_temp_f <span class="sc">+</span> weekday <span class="sc">+</span> month <span class="sc">+</span> precipitation <span class="sc">+</span> low_temp_f , <span class="at">data =</span> bikes_df, <span class="at">family =</span> <span class="st">&#39;poisson&#39;</span>)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_5)</span></code></pre></div>
+<pre><code>## 
+## Call:
+## glm(formula = total ~ high_temp_f + weekday + month + precipitation + 
+##     low_temp_f, family = &quot;poisson&quot;, data = bikes_df)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -61.014  -13.582    0.923   14.278   89.231  
+## 
+## Coefficients:
+##                    Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)       8.7831512  0.0046851 1874.71   &lt;2e-16 ***
+## high_temp_f       0.0232052  0.0001151  201.62   &lt;2e-16 ***
+## weekdayTuesday    0.0843729  0.0019502   43.26   &lt;2e-16 ***
+## weekdayWednesday  0.0954183  0.0018621   51.24   &lt;2e-16 ***
+## weekdayThursday   0.0538631  0.0019078   28.23   &lt;2e-16 ***
+## weekdayFriday    -0.0462440  0.0019472  -23.75   &lt;2e-16 ***
+## weekdaySaturday  -0.2716924  0.0020675 -131.41   &lt;2e-16 ***
+## weekdaySunday    -0.3455448  0.0021087 -163.86   &lt;2e-16 ***
+## month05           0.0602829  0.0023398   25.76   &lt;2e-16 ***
+## month06           0.1907576  0.0024971   76.39   &lt;2e-16 ***
+## month07           0.1250129  0.0029728   42.05   &lt;2e-16 ***
+## month08           0.0840970  0.0029370   28.63   &lt;2e-16 ***
+## month09           0.1649525  0.0025527   64.62   &lt;2e-16 ***
+## month10           0.1405085  0.0022223   63.23   &lt;2e-16 ***
+## precipitation    -0.5158534  0.0025730 -200.48   &lt;2e-16 ***
+## low_temp_f       -0.0116753  0.0001384  -84.37   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for poisson family taken to be 1)
+## 
+##     Null deviance: 402607  on 195  degrees of freedom
+## Residual deviance: 104709  on 180  degrees of freedom
+##   (18 observations deleted due to missingness)
+## AIC: 107014
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>fit_6 <span class="ot">=</span> <span class="fu">glm</span>(total <span class="sc">~</span> high_temp_f <span class="sc">+</span> weekday <span class="sc">*</span> month, <span class="at">data =</span> bikes_df, <span class="at">family =</span> <span class="st">&#39;poisson&#39;</span>)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_6)</span></code></pre></div>
+<pre><code>## 
+## Call:
+## glm(formula = total ~ high_temp_f + weekday * month, family = &quot;poisson&quot;, 
+##     data = bikes_df)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -77.857  -16.401    2.808   16.202   66.311  
+## 
+## Coefficients:
+##                            Estimate Std. Error  z value Pr(&gt;|z|)    
+## (Intercept)               8.533e+00  5.940e-03 1436.564  &lt; 2e-16 ***
+## high_temp_f               1.707e-02  6.572e-05  259.729  &lt; 2e-16 ***
+## weekdayTuesday           -2.298e-02  5.918e-03   -3.883 0.000103 ***
+## weekdayWednesday          2.764e-01  5.494e-03   50.311  &lt; 2e-16 ***
+## weekdayThursday           1.100e-01  5.615e-03   19.586  &lt; 2e-16 ***
+## weekdayFriday            -4.976e-02  5.445e-03   -9.139  &lt; 2e-16 ***
+## weekdaySaturday          -1.929e-01  5.780e-03  -33.378  &lt; 2e-16 ***
+## weekdaySunday            -1.353e-01  6.071e-03  -22.285  &lt; 2e-16 ***
+## month05                   5.641e-02  5.236e-03   10.774  &lt; 2e-16 ***
+## month06                   2.008e-01  5.226e-03   38.418  &lt; 2e-16 ***
+## month07                  -1.792e-01  5.608e-03  -31.954  &lt; 2e-16 ***
+## month08                   7.646e-03  5.190e-03    1.473 0.140716    
+## month09                  -4.535e-02  5.540e-03   -8.185 2.73e-16 ***
+## month10                   1.962e-01  5.161e-03   38.007  &lt; 2e-16 ***
+## weekdayTuesday:month05   -1.557e-02  7.614e-03   -2.045 0.040844 *  
+## weekdayWednesday:month05 -1.420e-01  7.304e-03  -19.442  &lt; 2e-16 ***
+## weekdayThursday:month05   5.062e-03  7.371e-03    0.687 0.492292    
+## weekdayFriday:month05    -9.275e-02  7.528e-03  -12.320  &lt; 2e-16 ***
+## weekdaySaturday:month05  -1.084e-01  7.925e-03  -13.683  &lt; 2e-16 ***
+## weekdaySunday:month05    -2.155e-01  8.045e-03  -26.784  &lt; 2e-16 ***
+## weekdayTuesday:month06   -2.213e-02  7.473e-03   -2.961 0.003068 ** 
+## weekdayWednesday:month06 -2.610e-01  6.965e-03  -37.476  &lt; 2e-16 ***
+## weekdayThursday:month06  -1.129e-01  7.097e-03  -15.914  &lt; 2e-16 ***
+## weekdayFriday:month06     2.316e-03  7.172e-03    0.323 0.746773    
+## weekdaySaturday:month06  -1.687e-01  7.579e-03  -22.256  &lt; 2e-16 ***
+## weekdaySunday:month06    -3.937e-01  8.008e-03  -49.161  &lt; 2e-16 ***
+## weekdayTuesday:month07    2.970e-01  7.658e-03   38.777  &lt; 2e-16 ***
+## weekdayWednesday:month07  4.306e-02  7.291e-03    5.906 3.50e-09 ***
+## weekdayThursday:month07   6.777e-02  7.453e-03    9.092  &lt; 2e-16 ***
+## weekdayFriday:month07     6.472e-02  7.329e-03    8.831  &lt; 2e-16 ***
+## weekdaySaturday:month07   2.994e-02  7.738e-03    3.870 0.000109 ***
+## weekdaySunday:month07    -4.672e-02  7.977e-03   -5.857 4.72e-09 ***
+## weekdayTuesday:month08    1.389e-01  7.250e-03   19.161  &lt; 2e-16 ***
+## weekdayWednesday:month08 -2.561e-01  6.955e-03  -36.817  &lt; 2e-16 ***
+## weekdayThursday:month08  -1.216e-01  7.229e-03  -16.821  &lt; 2e-16 ***
+## weekdayFriday:month08    -9.280e-02  7.169e-03  -12.944  &lt; 2e-16 ***
+## weekdaySaturday:month08  -7.105e-02  7.545e-03   -9.417  &lt; 2e-16 ***
+## weekdaySunday:month08    -2.660e-01  7.899e-03  -33.679  &lt; 2e-16 ***
+## weekdayTuesday:month09    2.218e-01  7.757e-03   28.600  &lt; 2e-16 ***
+## weekdayWednesday:month09 -1.135e-01  7.454e-03  -15.222  &lt; 2e-16 ***
+## weekdayThursday:month09  -8.666e-03  7.445e-03   -1.164 0.244408    
+## weekdayFriday:month09     8.280e-02  7.356e-03   11.257  &lt; 2e-16 ***
+## weekdaySaturday:month09   2.464e-01  7.772e-03   31.698  &lt; 2e-16 ***
+## weekdaySunday:month09     7.031e-02  8.093e-03    8.687  &lt; 2e-16 ***
+## weekdayTuesday:month10    1.263e-01  7.558e-03   16.715  &lt; 2e-16 ***
+## weekdayWednesday:month10 -1.721e-01  7.227e-03  -23.815  &lt; 2e-16 ***
+## weekdayThursday:month10  -1.740e-01  7.470e-03  -23.295  &lt; 2e-16 ***
+## weekdayFriday:month10    -7.679e-02  7.457e-03  -10.298  &lt; 2e-16 ***
+## weekdaySaturday:month10  -3.158e-01  7.899e-03  -39.984  &lt; 2e-16 ***
+## weekdaySunday:month10    -4.276e-01  8.110e-03  -52.731  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for poisson family taken to be 1)
+## 
+##     Null deviance: 415443  on 213  degrees of freedom
+## Residual deviance: 152478  on 164  degrees of freedom
+## AIC: 155061
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>fit_7 <span class="ot">=</span> <span class="fu">glm</span>(total <span class="sc">~</span> high_temp_f <span class="sc">+</span> low_temp_f <span class="sc">+</span> weekday , <span class="at">data =</span> bikes_df, <span class="at">family =</span> <span class="st">&#39;poisson&#39;</span>)</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_7)</span></code></pre></div>
+<pre><code>## 
+## Call:
+## glm(formula = total ~ high_temp_f + low_temp_f + weekday, family = &quot;poisson&quot;, 
+##     data = bikes_df)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -84.278  -15.326    4.451   19.231   56.031  
+## 
+## Coefficients:
+##                    Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)       8.6917730  0.0036049 2411.07   &lt;2e-16 ***
+## high_temp_f       0.0277679  0.0001069  259.70   &lt;2e-16 ***
+## low_temp_f       -0.0152115  0.0001131 -134.55   &lt;2e-16 ***
+## weekdayTuesday    0.1225263  0.0018341   66.81   &lt;2e-16 ***
+## weekdayWednesday  0.1485813  0.0017784   83.55   &lt;2e-16 ***
+## weekdayThursday   0.0784514  0.0018154   43.21   &lt;2e-16 ***
+## weekdayFriday    -0.0344685  0.0018848  -18.29   &lt;2e-16 ***
+## weekdaySaturday  -0.2304912  0.0019592 -117.65   &lt;2e-16 ***
+## weekdaySunday    -0.3102820  0.0020099 -154.38   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for poisson family taken to be 1)
+## 
+##     Null deviance: 415443  on 213  degrees of freedom
+## Residual deviance: 171363  on 205  degrees of freedom
+## AIC: 173864
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>fit_8 <span class="ot">=</span> <span class="fu">glm</span>(total <span class="sc">~</span> high_temp_f <span class="sc">+</span> weekday <span class="sc">+</span> low_temp_f <span class="sc">+</span>  precipitation , <span class="at">data =</span> bikes_df, <span class="at">family =</span> <span class="st">&#39;poisson&#39;</span>)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_8)</span></code></pre></div>
+<pre><code>## 
+## Call:
+## glm(formula = total ~ high_temp_f + weekday + low_temp_f + precipitation, 
+##     family = &quot;poisson&quot;, data = bikes_df)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -66.280  -15.351    2.107   16.216   83.654  
+## 
+## Coefficients:
+##                    Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)       8.7795631  0.0038037 2308.16   &lt;2e-16 ***
+## high_temp_f       0.0229569  0.0001130  203.10   &lt;2e-16 ***
+## weekdayTuesday    0.0750330  0.0019492   38.49   &lt;2e-16 ***
+## weekdayWednesday  0.0987894  0.0018591   53.14   &lt;2e-16 ***
+## weekdayThursday   0.0524679  0.0019027   27.58   &lt;2e-16 ***
+## weekdayFriday    -0.0495569  0.0019414  -25.53   &lt;2e-16 ***
+## weekdaySaturday  -0.2719220  0.0020657 -131.63   &lt;2e-16 ***
+## weekdaySunday    -0.3427375  0.0021067 -162.69   &lt;2e-16 ***
+## low_temp_f       -0.0095097  0.0001192  -79.75   &lt;2e-16 ***
+## precipitation    -0.5109156  0.0025220 -202.59   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for poisson family taken to be 1)
+## 
+##     Null deviance: 402607  on 195  degrees of freedom
+## Residual deviance: 115700  on 186  degrees of freedom
+##   (18 observations deleted due to missingness)
+## AIC: 117993
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+</div>
+</div>
+<div id="offset-example" class="section level1">
+<h1>Offset Example</h1>
+<p><strong>Description</strong></p>
+<p>The data given in data frame Insurance consist of the numbers of policyholders of an insurance company who were exposed to risk, and the numbers of car insurance claims made by those policyholders in the third quarter of 1973.</p>
+<p><strong>Format</strong></p>
+<p>This data frame contains the following columns:</p>
+<ul>
+<li><code>District</code> factor: district of residence of policyholder (1 to 4): 4 is major cities.</li>
+<li><code>Group</code> an ordered factor: group of car with levels &lt;1 litre, 1–1.5 litre, 1.5–2 litre, &gt;2 litre.</li>
+<li><code>Age</code> an ordered factor: the age of the insured in 4 groups labelled &lt;25, 25–29, 30–35, &gt;35.</li>
+<li><code>Holders</code> numbers of policyholders.</li>
+<li><code>Claims</code> numbers of claims</li>
+</ul>
+<p><strong>Source</strong></p>
+<p>L. A. Baxter, S. M. Coutts and G. A. F. Ross (1980) Applications of linear models in motor insurance. Proceedings of the 21st International Congress of Actuaries, Zurich pp. 11–29.</p>
+<p>M. Aitkin, D. Anderson, B. Francis and J. Hinde (1989) Statistical Modelling in GLIM. Oxford University Press.</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MASS)</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(Insurance )</span></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(Insurance)</span></code></pre></div>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["District"],"name":[1],"type":["fctr"],"align":["left"]},{"label":["Group"],"name":[2],"type":["ord"],"align":["right"]},{"label":["Age"],"name":[3],"type":["ord"],"align":["right"]},{"label":["Holders"],"name":[4],"type":["int"],"align":["right"]},{"label":["Claims"],"name":[5],"type":["int"],"align":["right"]}],"data":[{"1":"1","2":"<1l","3":"<25","4":"197","5":"38","_rn_":"1"},{"1":"1","2":"<1l","3":"25-29","4":"264","5":"35","_rn_":"2"},{"1":"1","2":"<1l","3":"30-35","4":"246","5":"20","_rn_":"3"},{"1":"1","2":"<1l","3":">35","4":"1680","5":"156","_rn_":"4"},{"1":"1","2":"1-1.5l","3":"<25","4":"284","5":"63","_rn_":"5"},{"1":"1","2":"1-1.5l","3":"25-29","4":"536","5":"84","_rn_":"6"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>Insurance <span class="ot">=</span> Insurance <span class="sc">%&gt;%</span> <span class="fu">rename_all</span>(janitor<span class="sc">::</span>make_clean_names)</span></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(Insurance)</span></code></pre></div>
+<pre><code>## &#39;data.frame&#39;:    64 obs. of  5 variables:
+##  $ district: Factor w/ 4 levels &quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ group   : Ord.factor w/ 4 levels &quot;&lt;1l&quot;&lt;&quot;1-1.5l&quot;&lt;..: 1 1 1 1 2 2 2 2 3 3 ...
+##  $ age     : Ord.factor w/ 4 levels &quot;&lt;25&quot;&lt;&quot;25-29&quot;&lt;..: 1 2 3 4 1 2 3 4 1 2 ...
+##  $ holders : int  197 264 246 1680 284 536 696 3582 133 286 ...
+##  $ claims  : int  38 35 20 156 63 84 89 400 19 52 ...</code></pre>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>Insurance <span class="ot">=</span> Insurance <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">rate =</span> claims<span class="sc">/</span>holders ) </span></code></pre></div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>Insurance <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>age, <span class="at">y =</span> rate, <span class="at">fill =</span> age   )) <span class="sc">+</span> </span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">&quot;Pastel1&quot;</span>) <span class="sc">+</span></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>( <span class="at">position=</span><span class="fu">position_jitter</span>(<span class="at">w=</span><span class="fl">0.1</span>,<span class="at">h=</span><span class="fl">0.1</span>) )</span></code></pre></div>
+<p><img src="poisson_reg_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>Insurance <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>group, <span class="at">y =</span> rate, <span class="at">fill =</span> group   )) <span class="sc">+</span> </span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">&quot;Pastel1&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>( <span class="at">position=</span><span class="fu">position_jitter</span>(<span class="at">w=</span><span class="fl">0.1</span>,<span class="at">h=</span><span class="fl">0.1</span>) )</span></code></pre></div>
+<p><img src="poisson_reg_files/figure-html/unnamed-chunk-20-2.png" width="672" /></p>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>Insurance <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>district, <span class="at">y =</span> rate, <span class="at">fill =</span> district)) <span class="sc">+</span> </span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">&quot;Pastel1&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>( <span class="at">position=</span><span class="fu">position_jitter</span>(<span class="at">w=</span><span class="fl">0.1</span>,<span class="at">h=</span><span class="fl">0.1</span>) )</span></code></pre></div>
+<p><img src="poisson_reg_files/figure-html/unnamed-chunk-20-3.png" width="672" /></p>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>Insurance <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>age, <span class="at">y =</span> rate , <span class="at">fill =</span> group    )) <span class="sc">+</span> </span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">&quot;Pastel1&quot;</span>)</span></code></pre></div>
+<p><img src="poisson_reg_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>fit_offset <span class="ot">&lt;-</span> <span class="fu">glm</span>(claims <span class="sc">~</span>  group <span class="sc">+</span> age ,  <span class="at">offset =</span> <span class="fu">log</span>(holders ),</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> Insurance, <span class="at">family =</span> <span class="st">&#39;poisson&#39;</span>)</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_offset)</span></code></pre></div>
+<pre><code>## 
+## Call:
+## glm(formula = claims ~ group + age, family = &quot;poisson&quot;, data = Insurance, 
+##     offset = log(holders))
+## 
+## Deviance Residuals: 
+##      Min        1Q    Median        3Q       Max  
+## -2.61407  -0.59513  -0.07229   0.78529   2.71480  
+## 
+## Coefficients:
+##              Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept) -1.776382   0.026812 -66.253  &lt; 2e-16 ***
+## group.L      0.433991   0.049428   8.780  &lt; 2e-16 ***
+## group.Q      0.006210   0.041979   0.148    0.882    
+## group.C     -0.028389   0.033060  -0.859    0.391    
+## age.L       -0.387021   0.049262  -7.856 3.95e-15 ***
+## age.Q       -0.001336   0.048914  -0.027    0.978    
+## age.C       -0.017155   0.048476  -0.354    0.723    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for poisson family taken to be 1)
+## 
+##     Null deviance: 236.259  on 63  degrees of freedom
+## Residual deviance:  65.291  on 57  degrees of freedom
+## AIC: 396.61
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>fit_offset2 <span class="ot">&lt;-</span> <span class="fu">glm</span>(claims <span class="sc">~</span>  group <span class="sc">*</span> age ,  <span class="at">offset =</span> <span class="fu">log</span>(holders ),</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> Insurance, <span class="at">family =</span> <span class="st">&#39;poisson&#39;</span>)</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_offset2)</span></code></pre></div>
+<pre><code>## 
+## Call:
+## glm(formula = claims ~ group * age, family = &quot;poisson&quot;, data = Insurance, 
+##     offset = log(holders))
+## 
+## Deviance Residuals: 
+##      Min        1Q    Median        3Q       Max  
+## -2.31270  -0.53796  -0.02782   0.71511   2.62522  
+## 
+## Coefficients:
+##               Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)   -1.79080    0.03133 -57.162  &lt; 2e-16 ***
+## group.L        0.39446    0.07466   5.284 1.27e-07 ***
+## group.Q        0.01040    0.06266   0.166    0.868    
+## group.C       -0.02937    0.04773  -0.615    0.538    
+## age.L         -0.36495    0.06694  -5.452 4.99e-08 ***
+## age.Q         -0.01679    0.06266  -0.268    0.789    
+## age.C          0.01276    0.05805   0.220    0.826    
+## group.L:age.L  0.20296    0.16003   1.268    0.205    
+## group.Q:age.L -0.11281    0.13389  -0.843    0.399    
+## group.C:age.L -0.07757    0.10120  -0.767    0.443    
+## group.L:age.Q -0.18582    0.14931  -1.244    0.213    
+## group.Q:age.Q  0.12770    0.12531   1.019    0.308    
+## group.C:age.Q  0.15693    0.09547   1.644    0.100    
+## group.L:age.C  0.04550    0.13775   0.330    0.741    
+## group.Q:age.C  0.06330    0.11611   0.545    0.586    
+## group.C:age.C  0.01397    0.08936   0.156    0.876    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for poisson family taken to be 1)
+## 
+##     Null deviance: 236.26  on 63  degrees of freedom
+## Residual deviance:  54.85  on 48  degrees of freedom
+## AIC: 404.17
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>fit_offset <span class="ot">&lt;-</span> <span class="fu">glm</span>(claims <span class="sc">~</span> district <span class="sc">+</span> group <span class="sc">+</span> age ,  <span class="at">offset =</span> <span class="fu">log</span>(holders ),</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> Insurance, <span class="at">family =</span> <span class="st">&#39;poisson&#39;</span>)</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_offset)</span></code></pre></div>
+<pre><code>## 
+## Call:
+## glm(formula = claims ~ district + group + age, family = &quot;poisson&quot;, 
+##     data = Insurance, offset = log(holders))
+## 
+## Deviance Residuals: 
+##      Min        1Q    Median        3Q       Max  
+## -2.46558  -0.50802  -0.03198   0.55555   1.94026  
+## 
+## Coefficients:
+##              Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept) -1.810508   0.032972 -54.910  &lt; 2e-16 ***
+## district2    0.025868   0.043016   0.601 0.547597    
+## district3    0.038524   0.050512   0.763 0.445657    
+## district4    0.234205   0.061673   3.798 0.000146 ***
+## group.L      0.429708   0.049459   8.688  &lt; 2e-16 ***
+## group.Q      0.004632   0.041988   0.110 0.912150    
+## group.C     -0.029294   0.033069  -0.886 0.375696    
+## age.L       -0.394432   0.049404  -7.984 1.42e-15 ***
+## age.Q       -0.000355   0.048918  -0.007 0.994210    
+## age.C       -0.016737   0.048478  -0.345 0.729910    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for poisson family taken to be 1)
+## 
+##     Null deviance: 236.26  on 63  degrees of freedom
+## Residual deviance:  51.42  on 54  degrees of freedom
+## AIC: 388.74
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3,h4",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

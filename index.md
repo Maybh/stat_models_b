@@ -10,7 +10,7 @@
 
 - Multinomial Regression
 
-- Poisson Regression
+- [Poisson Regression](poisson_reg.html) 
 
 - Non-Parametric Tests
 

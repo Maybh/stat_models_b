@@ -276,7 +276,16 @@ plot(diet.aov2)
 **F tests:**
 ```{r}
 diet.aov = aov(weight_loss~Diet,data=diet[!is.na(diet$gender),] )
-anova( diet.aov, diet.aov2)
+results = anova( diet.aov, diet.aov2)
+print(results)
+
+
+
+# note it is equivalent to aov() even if the data is unbalanced
+results2 = summary(diet.aov2)
+results$`Pr(>F)`[2]
+results2[[1]]$`Pr(>F)`[2] 
+
 ```
 
 
