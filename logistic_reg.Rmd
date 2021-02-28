@@ -59,7 +59,7 @@ Format:
 - `cursmoker` - Smoking as reported in the first interview - as stated at the time of hospitalization, refers to the smoking status in the year preceding the infarction.
 
 ```{r}
-glimpse(mi_df)
+str(mi_df)
 ```
 ```{r}
 dim(mi_df)
@@ -347,7 +347,7 @@ default_df = default_df %>% rename_all(janitor::make_clean_names)
 
 
 ```{r}
-glimpse( default_df)
+str( default_df)
 ```
 
 **Attribute Information:**

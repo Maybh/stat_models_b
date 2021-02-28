@@ -59,18 +59,18 @@ diet$Diet = factor(diet$Diet)
 ```
 
 ```{r}
-glimpse(diet)
+str(diet)
 ```
 
-```{r}
+```{r Histogram of Weight Lost}
 diet %>% ggplot(aes(x=weight_loss)) +
   geom_histogram(bins = 25, color = 'white', fill = 'darkblue') +
   labs(x= "Weight Lost", title = "Histogram of Weight Lost")
 ```
 
-```{r, warning=F}
+```{r Histogram of Weight Lost by Diet , warning=F}
 diet %>% ggplot(aes(x=weight_loss, fill = Diet)) +
-  geom_histogram(alpha= .5, color = 'white') +
+  geom_histogram(alpha= .5, color = 'white', position =  'identity') +
   labs(x= "Weight Lost", title = "Histogram of Weight Lost by Diet")
 ```
 
@@ -84,7 +84,7 @@ diet %>% group_by(Diet) %>% summarise(mean= mean(weight_loss),
 ## One-way ANOVA
 
 
-```{r}
+```{r Box plot weight loss}
 ggplot(data = diet, aes(x=Diet, y= weight_loss, color=Diet)) +
   geom_boxplot(outlier.colour="red", outlier.shape=8,outlier.size=3) +
   labs(x="Diet Type", y= "Weight Loss") +
@@ -121,12 +121,12 @@ summary(aov_equal_var)
 
 #### Diagnostic plots
 
-```{r}
+```{r Checking Assumptions r}
 plot(diet.aov)
 ```
 
 We can also create these plot manually:
-```{r}
+```{r Checking Assumptions }
 # residudal vs fitted plot:
 diet.resid = resid(diet.aov)
 diet.predict = predict(diet.aov)
@@ -162,7 +162,7 @@ library(multcomp)
 ```
 
 
-```{r}
+```{r }
 contr = rbind(
   "2 - 1" = c(-1,1,0),
   "3 - 1" = c(-1,0,1),
@@ -178,13 +178,13 @@ pairwise_ci = confint(pairwise_res, calpha = univariate_calpha())
 pairwise_ci
 ```
 
-```{r}
+```{r Pairwise Comparisons}
 plot(pairwise_ci, xlab = "Weight loss diff")
 ```
 
 
 ##### Bonferroni Correction
-```{r}
+```{r Bonferroni Correction }
 summary(pairwise_res, test = adjusted(type = 'bonf'))
 
 alpha = 0.05 ; m = 3 
@@ -197,7 +197,7 @@ plot(pairwise_ci_bonferroni)
 
 
 ##### Tukey's Method
-```{r}
+```{r Tukeys Method }
 
 pairwise_res_tukey = glht(diet.aov,  linfct = mcp(Diet = "Tukey"))
 
@@ -219,6 +219,7 @@ plot(pairwise_ci_tukey, xlab = "Weight loss diff")
 $$
 H_0: \frac{\alpha_1+\alpha_2}{2}-\alpha_3=0 \leftrightarrow  \frac{\mu_1 + \mu_2}{2} - \mu_3 = 0 
 $$
+
 ```{r}
 contr1 = (c(1/2,1/2,-1))
 glht_test = glht(diet.aov,  linfct = mcp(Diet = contr1))
@@ -252,7 +253,7 @@ Gender:
 1- male, 0 - female   
 
 
-```{r}
+```{r diet: Boxplot of weight lost by gender }
 diet$gender = factor(diet$gender)
 ggplot(data = diet, aes(x=Diet, y= weight_loss, color=gender)) +
   geom_boxplot(outlier.colour="red", outlier.shape=8,outlier.size=2) +
@@ -262,7 +263,7 @@ ggplot(data = diet, aes(x=Diet, y= weight_loss, color=gender)) +
 
 
 
-```{r}
+```{r diet: two-way checking assumptions }
 diet.aov2 = aov( weight_loss~Diet + gender ,data=diet)
 summary(diet.aov2) 
 
@@ -279,7 +280,7 @@ summary(diet.aov2_intr)
 ```
 
 **Interaction Plot**
-```{r}
+```{r interatcion plot diet }
 interaction.plot(x.factor = diet$Diet,
                  trace.factor = diet$gender, 
                  response = diet$weight_loss,
@@ -290,7 +291,7 @@ interaction.plot(x.factor = diet$Diet,
                  pch=c(1,8), col = c("#FF6347", "#3CB371"))
 ```
 
-```{r}
+```{r two-way with interaction checking assumptions }
 plot(diet.aov2_intr)
 ```
 
@@ -302,7 +303,7 @@ Ranking of movies from different genres by women and men.
 
 ## No interaction 
 
-```{r, warning=F}
+```{r rating interaction plot 1, warning=F}
 set.seed(22)
 group <- gl(n = 2, k = 20, labels = c("Female","Male"))
 trt <- rep(rep(c("Adventure","Comedy"), each=10),2)
@@ -330,7 +331,7 @@ interaction.plot(x.factor = df1$trt,
 
 ## with interaction
 
-```{r}
+```{r rating interaction plot 2 }
 set.seed(22)
 group <- gl(n = 2, k = 20, labels = c("Female","Male"))
 trt <- rep(rep(c("Sci-fi","Romance"), each=10),2)
@@ -352,7 +353,7 @@ interaction.plot(x.factor = df2$trt,
 
 ```
 
-```{r}
+```{r rating interaction plot 3}
 set.seed(22)
 trt <- rep(rep(c("Romantic Comedy", "Musicals"), each=10),2)
 
@@ -400,12 +401,12 @@ library(Stat2Data)
 
 data(Ricci)
 
-glimpse(Ricci)
+str(Ricci)
 ```
 
 
 
-```{r}
+```{r ricci: boxplot of score by race}
 ggplot(data = Ricci, 
        aes(x=Race, y= Combine, color=Position)) +
   geom_boxplot(outlier.colour="red", outlier.shape=8,outlier.size=3) +
@@ -436,7 +437,7 @@ ricci_capt_ci_tukey = confint(ricci_capt_tukey)
 ricci_capt_ci_tukey
 ```
 
-```{r}
+```{r ricci option 1: tukey cis}
 plot(ricci_capt_ci_tukey, xlab = "score diff")
 ```
 
@@ -458,7 +459,7 @@ ricci_lie_ci_tukey
 ```
 
 
-```{r}
+```{r ricci option 2: tukey cis}
 plot(ricci_lie_ci_tukey, xlab = "score diff")
 ```
 
@@ -470,7 +471,7 @@ summary(aov(Combine  ~ Race*Position , data = Ricci))
 ```
 
 
-```{r}
+```{r ricci: two way anova interaction plot}
 # interaction plot 
 interaction.plot(x.factor = Ricci$Race,
                  trace.factor = Ricci$Position, 
@@ -483,7 +484,7 @@ interaction.plot(x.factor = Ricci$Race,
 ```
 
 
-```{r}
+```{r ricci: two way anova interaction plot2}
 interaction.plot(x.factor = Ricci$Position,
                  trace.factor = Ricci$Race, 
                  response = Ricci$Combine,
@@ -500,7 +501,7 @@ interaction.plot(x.factor = Ricci$Position,
 
 Example:
 
-```{r}
+```{r One-factor-at-a-time}
 res_s = c(13, 24, 18, 16 ,14, 27, 30, 14, 14)
 df = cbind(expand.grid(Treatment_1 = c("none", "low", "high"),
             Treatment_2 = c("none", "low", "high")), y_exp =res_s)
@@ -578,7 +579,7 @@ let's filter only mvc performance:
 feedback_long_df = read.csv("datasets/feedback_long_df.csv")
 feedback_long_df_mvc  = feedback_long_df %>% filter(activity == "mvc")
 
-glimpse(feedback_long_df_mvc)
+str(feedback_long_df_mvc)
 ```
 
 
@@ -588,7 +589,7 @@ feedback_long_df_mvc = feedback_long_df_mvc %>% mutate_at(vars(id, gender, feedb
 
 let's take a look:
 
-```{r}
+```{r Feedback: Boxplots of Average Relative Performance by Feedback}
 feedback_long_df_mvc %>% group_by(id, feedback) %>%
   summarise(mean_per = mean(performance)) %>%
   ggplot(aes(x=feedback , y=mean_per, color = feedback)) +
@@ -596,7 +597,7 @@ feedback_long_df_mvc %>% group_by(id, feedback) %>%
   labs(title = "Boxplots of Average Relative Performance by Feedback" , y = "Average Relative Performance")
 ```
 
-```{r}
+```{r Feedback: Boxplots of Relative Performance by Feedback}
 feedback_long_df_mvc %>% 
   ggplot(aes(x=feedback , y=performance, color = feedback)) +
   geom_boxplot() + theme(legend.position = "") +
@@ -606,7 +607,7 @@ feedback_long_df_mvc %>%
 
 
 
-```{r}
+```{r Feedback: Boxplots of Average Relative Performance by Feedback and gender}
 feedback_long_df_mvc %>% group_by(id, feedback, gender) %>%
   summarise(mean_per = mean(performance)) %>%
   ggplot(aes(x=feedback , y=mean_per, color = gender)) +
@@ -614,7 +615,7 @@ feedback_long_df_mvc %>% group_by(id, feedback, gender) %>%
   labs(title = "Boxplots of Average Relative Performance by Feedback" , y = "Average Relative Performance")
 ```
 
-```{r}
+```{r Feedback: Boxplots of  Relative Performance by Feedback}
 feedback_long_df_mvc %>% 
   ggplot(aes(x=feedback , y=performance, color = gender)) +
   geom_boxplot() +
@@ -624,7 +625,7 @@ feedback_long_df_mvc %>%
 
 
 
-```{r}
+```{r Feedback:Average Relative Performance by Feedback and Time2}
 feedback_long_df_mvc %>% group_by(feedback, time) %>% summarise(mean_perf = mean(performance)) %>%
   ggplot(aes(x=factor(time) , y=mean_perf, color = feedback, group = feedback)) +
   geom_point() + 
@@ -633,7 +634,7 @@ feedback_long_df_mvc %>% group_by(feedback, time) %>% summarise(mean_perf = mean
        x = "Repetitions" , y = "Average Relative Performance")
 ```
 
-```{r}
+```{r Feedback:Average Relative Performance by Feedback and Time}
 feedback_long_df_mvc %>% group_by(feedback, time, gender) %>% summarise(mean_perf = mean(performance)) %>%
   ggplot(aes(x=factor(time) , y=mean_perf, color = feedback, group = feedback)) +
   geom_point() + 
@@ -664,13 +665,13 @@ anova(fe.fit.2)
 
 **Interaction**
 
-```{r}
+```{r Feedback: interation plot gender and feedback}
 ggplot(feedback_long_df_mvc, aes(x = gender, y = performance, group = feedback, col = feedback)) + 
    stat_summary(fun.y = mean, geom = "line", size = 1.5) +
   labs(x= "Gender", y="Relative Performance")
 ```
 
-```{r}
+```{r Feedback: interation plot gender and feedback2}
 ggplot(feedback_long_df_mvc, aes(x = feedback, y = performance, group = gender, col = gender)) + 
    stat_summary(fun.y = mean, geom = "line", size = 1.5) +
   labs(x= "Feedback", y="Relative Performance")
@@ -692,7 +693,7 @@ library("lmerTest")
 
 let's filter only control group: feedback == "no feedback" 
 
-```{r}
+```{r Feedback: One-way Random Effect}
 nofeed_df =  feedback_long_df_mvc[(feedback_long_df_mvc$feedback=="no feedback"),]
 
 feed_fit.1 =lmer(performance ~  (1 | id) , data = nofeed_df )
@@ -709,7 +710,7 @@ confint(feed_fit.1, oldNames=FALSE)
 
 **Checking Assumptions**
 
-```{r}
+```{r Feedback: One-way Random Effect - checking assumptions}
 
 feed_fit.1.resid = resid(feed_fit.1)
 feed_fit.1.predict = predict(feed_fit.1)
@@ -717,7 +718,7 @@ plot(feed_fit.1.predict,feed_fit.1.resid, xlab = "Fitted Values", ylab = "Residu
 abline(0,0, col = "red")
 ```
 
-```{r}
+```{r Feedback: One-way Random Effect - checking assumptions2}
 sresid = feed_fit.1.resid / sd(feed_fit.1.resid)
 qqnorm(sresid) 
 abline(a = 0 , b = 1) # add line: y=x 
@@ -727,7 +728,7 @@ abline(a = 0 , b = 1) # add line: y=x
 ```
 
 We can also get “estimates” (conditional means) of the random effects $a_i$ with the function `ranef`:
-```{r}
+```{r Feedback: One-way Random Effect - checking assumptions3}
 sresid_ref = ranef(feed_fit.1)$id[, "(Intercept)"] / sd(ranef(feed_fit.1)$id[, "(Intercept)"])
 qqnorm(sresid_ref, main = "Random effects")
 qqline(sresid_ref)
@@ -751,7 +752,7 @@ confint(feed_fit.2, oldNames=FALSE)
 
 **Checking Assumptions**
 
-```{r}
+```{r Feedback: Mixed Model Random Effect - checking assumptions }
 resid_plot = function(model) {
   model.resid = resid(model)
   model.predict = predict(model)
@@ -774,7 +775,7 @@ qq_plot_ref = function(model) {
 ```
 
 
-```{r}
+```{r Feedback: Mixed Model Random Effect - checking assumptions 1}
 resid_plot(feed_fit.2)
 qq_plot(feed_fit.2)
 qq_plot_ref(feed_fit.2)
@@ -798,7 +799,7 @@ confint(feed_fit.3, oldNames=FALSE)
 
 **Checking Assumptions**
 
-```{r}
+```{r Feedback: Mixed Model Random Effect - checking assumptions 2 }
 resid_plot(feed_fit.3)
 qq_plot(feed_fit.3)
 qq_plot_ref(feed_fit.3)
@@ -822,7 +823,7 @@ feedback_long_df
 
 **Checking Assumptions**
 
-```{r}
+```{r Feedback: Mixed Model Random Effect - checking assumptions 3 }
 resid_plot(feed_fit.4)
 qq_plot(feed_fit.4)
 qq_plot_ref(feed_fit.4)
