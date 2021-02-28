@@ -253,7 +253,7 @@ Gender:
 1- male, 0 - female   
 
 
-```{r diet: Boxplot of weight lost by gender }
+```{r diet Boxplot of weight lost by gender }
 diet$gender = factor(diet$gender)
 ggplot(data = diet, aes(x=Diet, y= weight_loss, color=gender)) +
   geom_boxplot(outlier.colour="red", outlier.shape=8,outlier.size=2) +
@@ -263,7 +263,7 @@ ggplot(data = diet, aes(x=Diet, y= weight_loss, color=gender)) +
 
 
 
-```{r diet: two-way checking assumptions }
+```{r diet two-way checking assumptions }
 diet.aov2 = aov( weight_loss~Diet + gender ,data=diet)
 summary(diet.aov2) 
 
@@ -301,7 +301,7 @@ interaction.plot(x.factor = diet$Diet,
                  pch=c(1,8), col = c("#FF6347", "#3CB371"))
 ```
 
-```{r two-way with interaction checking assumptions }
+```{r}
 plot(diet.aov2_intr)
 ```
 
@@ -722,7 +722,7 @@ library("lmerTest")
 
 let's filter only control group: feedback == "no feedback" 
 
-```{r Feedback: One-way Random Effect}
+```{r Feedback One way Random Effect}
 nofeed_df =  feedback_long_df_mvc[(feedback_long_df_mvc$feedback=="no feedback"),]
 
 feed_fit.1 =lmer(performance ~  (1 | id) , data = nofeed_df )
@@ -739,7 +739,7 @@ confint(feed_fit.1, oldNames=FALSE)
 
 **Checking Assumptions**
 
-```{r Feedback: One-way Random Effect - checking assumptions}
+```{r Feedback One way Random Effect  checking assumptions}
 
 feed_fit.1.resid = resid(feed_fit.1)
 feed_fit.1.predict = predict(feed_fit.1)
@@ -747,7 +747,7 @@ plot(feed_fit.1.predict,feed_fit.1.resid, xlab = "Fitted Values", ylab = "Residu
 abline(0,0, col = "red")
 ```
 
-```{r Feedback: One-way Random Effect - checking assumptions2}
+```{r Feedback One way Random Effect  checking assumptions2}
 sresid = feed_fit.1.resid / sd(feed_fit.1.resid)
 qqnorm(sresid) 
 abline(a = 0 , b = 1) # add line: y=x 
@@ -757,7 +757,7 @@ abline(a = 0 , b = 1) # add line: y=x
 ```
 
 We can also get “estimates” (conditional means) of the random effects $a_i$ with the function `ranef`:
-```{r Feedback: One-way Random Effect - checking assumptions3}
+```{r Feedback One way Random Effect  checking assumptions3}
 sresid_ref = ranef(feed_fit.1)$id[, "(Intercept)"] / sd(ranef(feed_fit.1)$id[, "(Intercept)"])
 qqnorm(sresid_ref, main = "Random effects")
 qqline(sresid_ref)
@@ -781,7 +781,7 @@ confint(feed_fit.2, oldNames=FALSE)
 
 **Checking Assumptions**
 
-```{r Feedback: Mixed Model Random Effect - checking assumptions }
+```{r Feedback  Mixed Model Random Effect  checking assumptions }
 resid_plot = function(model) {
   model.resid = resid(model)
   model.predict = predict(model)
@@ -804,7 +804,7 @@ qq_plot_ref = function(model) {
 ```
 
 
-```{r Feedback: Mixed Model Random Effect - checking assumptions 1}
+```{r Feedback  Mixed Model Random Effect  checking assumptions 1}
 resid_plot(feed_fit.2)
 qq_plot(feed_fit.2)
 qq_plot_ref(feed_fit.2)
@@ -828,7 +828,7 @@ confint(feed_fit.3, oldNames=FALSE)
 
 **Checking Assumptions**
 
-```{r Feedback: Mixed Model Random Effect - checking assumptions 2 }
+```{r Feedback  Mixed Model Random Effect  checking assumptions 2 }
 resid_plot(feed_fit.3)
 qq_plot(feed_fit.3)
 qq_plot_ref(feed_fit.3)
@@ -852,7 +852,7 @@ feedback_long_df
 
 **Checking Assumptions**
 
-```{r Feedback: Mixed Model Random Effect - checking assumptions 3 }
+```{r Feedback Mixed Model Random Effect checking assumptions 3 }
 resid_plot(feed_fit.4)
 qq_plot(feed_fit.4)
 qq_plot_ref(feed_fit.4)

@@ -476,9 +476,9 @@ div.tocify {
 ## 
 ## Linear Hypotheses:
 ##            Estimate Std. Error t value Pr(&gt;|t|)   
-## 2 - 1 == 0  -0.2741     0.6719  -0.408   0.9125   
-## 3 - 1 == 0   1.8481     0.6719   2.751   0.0201 * 
-## 3 - 2 == 0   2.1222     0.6518   3.256   0.0047 **
+## 2 - 1 == 0  -0.2741     0.6719  -0.408  0.91244   
+## 3 - 1 == 0   1.8481     0.6719   2.751  0.02003 * 
+## 3 - 2 == 0   2.1222     0.6518   3.256  0.00477 **
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## (Adjusted p values reported -- single-step method)</code></pre>
@@ -562,15 +562,15 @@ div.tocify {
 ## 
 ## Fit: aov(formula = weight_loss ~ Diet, data = diet)
 ## 
-## Quantile = 2.3907
+## Quantile = 2.391
 ## 95% family-wise confidence level
 ##  
 ## 
 ## Linear Hypotheses:
 ##            Estimate lwr     upr    
-## 2 - 1 == 0 -0.2741  -1.8803  1.3322
-## 3 - 1 == 0  1.8481   0.2419  3.4544
-## 3 - 2 == 0  2.1222   0.5639  3.6805</code></pre>
+## 2 - 1 == 0 -0.2741  -1.8805  1.3324
+## 3 - 1 == 0  1.8481   0.2417  3.4546
+## 3 - 2 == 0  2.1222   0.5637  3.6807</code></pre>
 <div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(pairwise_ci_tukey, <span class="at">xlab =</span> <span class="st">&quot;Weight loss diff&quot;</span>)</span></code></pre></div>
 <p><img src="anova_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
 </div>
@@ -646,7 +646,7 @@ H_0: \frac{\alpha_1+\alpha_2}{2}-\alpha_3=0 \leftrightarrow  \frac{\mu_1 + \mu_2
 <span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">outlier.colour=</span><span class="st">&quot;red&quot;</span>, <span class="at">outlier.shape=</span><span class="dv">8</span>,<span class="at">outlier.size=</span><span class="dv">2</span>) <span class="sc">+</span></span>
 <span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">&quot;Diet Type&quot;</span>, <span class="at">y=</span> <span class="st">&quot;Weight Loss&quot;</span>) <span class="sc">+</span></span>
 <span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_discrete</span>(<span class="at">name =</span> <span class="st">&quot;Gender&quot;</span>, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;Female&quot;</span>, <span class="st">&quot;Male&quot;</span>))</span></code></pre></div>
-<p><img src="anova_files/figure-html/diet: Boxplot of weight lost by gender-1.png" width="672" /></p>
+<p><img src="anova_files/figure-html/diet%20Boxplot%20of%20weight%20lost%20by%20gender-1.png" width="672" /></p>
 <div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>diet.aov2 <span class="ot">=</span> <span class="fu">aov</span>( weight_loss<span class="sc">~</span>Diet <span class="sc">+</span> gender ,<span class="at">data=</span>diet)</span>
 <span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(diet.aov2) </span></code></pre></div>
 <pre><code>##             Df Sum Sq Mean Sq F value  Pr(&gt;F)   
@@ -657,7 +657,7 @@ H_0: \frac{\alpha_1+\alpha_2}{2}-\alpha_3=0 \leftrightarrow  \frac{\mu_1 + \mu_2
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 2 observations deleted due to missingness</code></pre>
 <div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(diet.aov2)</span></code></pre></div>
-<p><img src="anova_files/figure-html/diet: two-way checking assumptions-1.png" width="672" /><img src="anova_files/figure-html/diet: two-way checking assumptions-2.png" width="672" /><img src="anova_files/figure-html/diet: two-way checking assumptions-3.png" width="672" /><img src="anova_files/figure-html/diet: two-way checking assumptions-4.png" width="672" /></p>
+<p><img src="anova_files/figure-html/diet%20two-way%20checking%20assumptions-1.png" width="672" /><img src="anova_files/figure-html/diet%20two-way%20checking%20assumptions-2.png" width="672" /><img src="anova_files/figure-html/diet%20two-way%20checking%20assumptions-3.png" width="672" /><img src="anova_files/figure-html/diet%20two-way%20checking%20assumptions-4.png" width="672" /></p>
 <p><strong>F tests:</strong></p>
 <div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>diet.aov <span class="ot">=</span> <span class="fu">aov</span>(weight_loss<span class="sc">~</span>Diet,<span class="at">data=</span>diet[<span class="sc">!</span><span class="fu">is.na</span>(diet<span class="sc">$</span>gender),] )</span>
 <span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>( diet.aov, diet.aov2)</span></code></pre></div>
@@ -692,7 +692,7 @@ H_0: \frac{\alpha_1+\alpha_2}{2}-\alpha_3=0 \leftrightarrow  \frac{\mu_1 + \mu_2
 <span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>                 <span class="at">pch=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">8</span>), <span class="at">col =</span> <span class="fu">c</span>(<span class="st">&quot;#FF6347&quot;</span>, <span class="st">&quot;#3CB371&quot;</span>))</span></code></pre></div>
 <p><img src="anova_files/figure-html/interatcion%20plot%20diet-1.png" width="672" /></p>
 <div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(diet.aov2_intr)</span></code></pre></div>
-<p><img src="anova_files/figure-html/two-way%20with%20interaction%20checking%20assumptions-1.png" width="672" /><img src="anova_files/figure-html/two-way%20with%20interaction%20checking%20assumptions-2.png" width="672" /><img src="anova_files/figure-html/two-way%20with%20interaction%20checking%20assumptions-3.png" width="672" /><img src="anova_files/figure-html/two-way%20with%20interaction%20checking%20assumptions-4.png" width="672" /></p>
+<p><img src="anova_files/figure-html/unnamed-chunk-16-1.png" width="672" /><img src="anova_files/figure-html/unnamed-chunk-16-2.png" width="672" /><img src="anova_files/figure-html/unnamed-chunk-16-3.png" width="672" /><img src="anova_files/figure-html/unnamed-chunk-16-4.png" width="672" /></p>
 <p><strong>Levin’s test</strong></p>
 <div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>diet <span class="ot">=</span> diet[<span class="sc">!</span><span class="fu">is.na</span>(diet<span class="sc">$</span>gender),]</span>
 <span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>groups_df <span class="ot">=</span> <span class="fu">cbind</span> ( <span class="fu">expand.grid</span>(<span class="at">Diet =</span> <span class="fu">unique</span>(diet<span class="sc">$</span>Diet),<span class="at">gender =</span>  <span class="fu">unique</span>(diet<span class="sc">$</span>gender)), <span class="at">group =</span> <span class="fu">factor</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>))</span>
@@ -992,30 +992,30 @@ Ranking of movies from different genres by women and men.</p>
 <span id="cb82-3"><a href="#cb82-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>feedback , <span class="at">y=</span>mean_per, <span class="at">color =</span> feedback)) <span class="sc">+</span></span>
 <span id="cb82-4"><a href="#cb82-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;&quot;</span>) <span class="sc">+</span></span>
 <span id="cb82-5"><a href="#cb82-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Boxplots of Average Relative Performance by Feedback&quot;</span> , <span class="at">y =</span> <span class="st">&quot;Average Relative Performance&quot;</span>)</span></code></pre></div>
-<p><img src="anova_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
+<p><img src="anova_files/figure-html/unnamed-chunk-28-1.png" width="672" /></p>
 <div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a>feedback_long_df_mvc <span class="sc">%&gt;%</span> </span>
 <span id="cb83-2"><a href="#cb83-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>feedback , <span class="at">y=</span>performance, <span class="at">color =</span> feedback)) <span class="sc">+</span></span>
 <span id="cb83-3"><a href="#cb83-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;&quot;</span>) <span class="sc">+</span></span>
 <span id="cb83-4"><a href="#cb83-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Boxplots of Relative Performance by Feedback&quot;</span> , <span class="at">y =</span> <span class="st">&quot;Relative Performance&quot;</span>)</span></code></pre></div>
-<p><img src="anova_files/figure-html/unnamed-chunk-28-1.png" width="672" /></p>
+<p><img src="anova_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
 <div class="sourceCode" id="cb84"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a>feedback_long_df_mvc <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(id, feedback, gender) <span class="sc">%&gt;%</span></span>
 <span id="cb84-2"><a href="#cb84-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_per =</span> <span class="fu">mean</span>(performance)) <span class="sc">%&gt;%</span></span>
 <span id="cb84-3"><a href="#cb84-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>feedback , <span class="at">y=</span>mean_per, <span class="at">color =</span> gender)) <span class="sc">+</span></span>
 <span id="cb84-4"><a href="#cb84-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
 <span id="cb84-5"><a href="#cb84-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Boxplots of Average Relative Performance by Feedback&quot;</span> , <span class="at">y =</span> <span class="st">&quot;Average Relative Performance&quot;</span>)</span></code></pre></div>
-<p><img src="anova_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
+<p><img src="anova_files/figure-html/unnamed-chunk-30-1.png" width="672" /></p>
 <div class="sourceCode" id="cb85"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a>feedback_long_df_mvc <span class="sc">%&gt;%</span> </span>
 <span id="cb85-2"><a href="#cb85-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>feedback , <span class="at">y=</span>performance, <span class="at">color =</span> gender)) <span class="sc">+</span></span>
 <span id="cb85-3"><a href="#cb85-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
 <span id="cb85-4"><a href="#cb85-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Boxplots of  Relative Performance by Feedback&quot;</span> , <span class="at">y =</span> <span class="st">&quot; Relative Performance&quot;</span>)</span></code></pre></div>
-<p><img src="anova_files/figure-html/unnamed-chunk-30-1.png" width="672" /></p>
+<p><img src="anova_files/figure-html/unnamed-chunk-31-1.png" width="672" /></p>
 <div class="sourceCode" id="cb86"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a>feedback_long_df_mvc <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(feedback, time) <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="at">mean_perf =</span> <span class="fu">mean</span>(performance)) <span class="sc">%&gt;%</span></span>
 <span id="cb86-2"><a href="#cb86-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span><span class="fu">factor</span>(time) , <span class="at">y=</span>mean_perf, <span class="at">color =</span> feedback, <span class="at">group =</span> feedback)) <span class="sc">+</span></span>
 <span id="cb86-3"><a href="#cb86-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
 <span id="cb86-4"><a href="#cb86-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">alpha=</span>.<span class="dv">5</span>, <span class="at">size =</span> <span class="fl">1.5</span>) <span class="sc">+</span> </span>
 <span id="cb86-5"><a href="#cb86-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Average Relative Performance by Feedback &amp; Time&quot;</span> ,</span>
 <span id="cb86-6"><a href="#cb86-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Repetitions&quot;</span> , <span class="at">y =</span> <span class="st">&quot;Average Relative Performance&quot;</span>)</span></code></pre></div>
-<p><img src="anova_files/figure-html/unnamed-chunk-31-1.png" width="672" /></p>
+<p><img src="anova_files/figure-html/unnamed-chunk-32-1.png" width="672" /></p>
 <div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a>feedback_long_df_mvc <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(feedback, time, gender) <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="at">mean_perf =</span> <span class="fu">mean</span>(performance)) <span class="sc">%&gt;%</span></span>
 <span id="cb87-2"><a href="#cb87-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span><span class="fu">factor</span>(time) , <span class="at">y=</span>mean_perf, <span class="at">color =</span> feedback, <span class="at">group =</span> feedback)) <span class="sc">+</span></span>
 <span id="cb87-3"><a href="#cb87-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
@@ -1023,7 +1023,7 @@ Ranking of movies from different genres by women and men.</p>
 <span id="cb87-5"><a href="#cb87-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>gender) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;bottom&quot;</span>) <span class="sc">+</span></span>
 <span id="cb87-6"><a href="#cb87-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Average Relative Performance by Feedback &amp; Time&quot;</span> , <span class="at">subtitle =</span> <span class="st">&quot;Facet by gender&quot;</span>,</span>
 <span id="cb87-7"><a href="#cb87-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Repetitions&quot;</span> , <span class="at">y =</span> <span class="st">&quot;Average Relative Performance&quot;</span>)</span></code></pre></div>
-<p><img src="anova_files/figure-html/unnamed-chunk-32-1.png" width="672" /></p>
+<p><img src="anova_files/figure-html/unnamed-chunk-33-1.png" width="672" /></p>
 </div>
 <div id="analysis" class="section level3">
 <h3>Analysis</h3>
@@ -1054,11 +1054,11 @@ Ranking of movies from different genres by women and men.</p>
 <div class="sourceCode" id="cb92"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(feedback_long_df_mvc, <span class="fu">aes</span>(<span class="at">x =</span> gender, <span class="at">y =</span> performance, <span class="at">group =</span> feedback, <span class="at">col =</span> feedback)) <span class="sc">+</span> </span>
 <span id="cb92-2"><a href="#cb92-2" aria-hidden="true" tabindex="-1"></a>   <span class="fu">stat_summary</span>(<span class="at">fun.y =</span> mean, <span class="at">geom =</span> <span class="st">&quot;line&quot;</span>, <span class="at">size =</span> <span class="fl">1.5</span>) <span class="sc">+</span></span>
 <span id="cb92-3"><a href="#cb92-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span> <span class="st">&quot;Gender&quot;</span>, <span class="at">y=</span><span class="st">&quot;Relative Performance&quot;</span>)</span></code></pre></div>
-<p><img src="anova_files/figure-html/unnamed-chunk-35-1.png" width="672" /></p>
+<p><img src="anova_files/figure-html/unnamed-chunk-36-1.png" width="672" /></p>
 <div class="sourceCode" id="cb93"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(feedback_long_df_mvc, <span class="fu">aes</span>(<span class="at">x =</span> feedback, <span class="at">y =</span> performance, <span class="at">group =</span> gender, <span class="at">col =</span> gender)) <span class="sc">+</span> </span>
 <span id="cb93-2"><a href="#cb93-2" aria-hidden="true" tabindex="-1"></a>   <span class="fu">stat_summary</span>(<span class="at">fun.y =</span> mean, <span class="at">geom =</span> <span class="st">&quot;line&quot;</span>, <span class="at">size =</span> <span class="fl">1.5</span>) <span class="sc">+</span></span>
 <span id="cb93-3"><a href="#cb93-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span> <span class="st">&quot;Feedback&quot;</span>, <span class="at">y=</span><span class="st">&quot;Relative Performance&quot;</span>)</span></code></pre></div>
-<p><img src="anova_files/figure-html/unnamed-chunk-36-1.png" width="672" /></p>
+<p><img src="anova_files/figure-html/unnamed-chunk-37-1.png" width="672" /></p>
 <div class="sourceCode" id="cb94"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a>fe.fit<span class="fl">.3</span> <span class="ot">=</span> <span class="fu">aov</span>(performance <span class="sc">~</span> feedback <span class="sc">*</span> gender , <span class="at">data =</span> feedback_long_df_mvc)</span>
 <span id="cb94-2"><a href="#cb94-2" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fe.fit<span class="fl">.3</span>)</span></code></pre></div>
 <pre><code>## Analysis of Variance Table
@@ -1114,18 +1114,18 @@ Ranking of movies from different genres by women and men.</p>
 <span id="cb103-2"><a href="#cb103-2" aria-hidden="true" tabindex="-1"></a>feed_fit.<span class="fl">1.</span>predict <span class="ot">=</span> <span class="fu">predict</span>(feed_fit<span class="fl">.1</span>)</span>
 <span id="cb103-3"><a href="#cb103-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(feed_fit.<span class="fl">1.</span>predict,feed_fit.<span class="fl">1.</span>resid, <span class="at">xlab =</span> <span class="st">&quot;Fitted Values&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;Residuals&quot;</span>)</span>
 <span id="cb103-4"><a href="#cb103-4" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="dv">0</span>,<span class="dv">0</span>, <span class="at">col =</span> <span class="st">&quot;red&quot;</span>)</span></code></pre></div>
-<p><img src="anova_files/figure-html/Feedback: One-way Random Effect - checking assumptions-1.png" width="672" /></p>
+<p><img src="anova_files/figure-html/Feedback%20One%20way%20Random%20Effect%20%20checking%20assumptions-1.png" width="672" /></p>
 <div class="sourceCode" id="cb104"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb104-1"><a href="#cb104-1" aria-hidden="true" tabindex="-1"></a>sresid <span class="ot">=</span> feed_fit.<span class="fl">1.</span>resid <span class="sc">/</span> <span class="fu">sd</span>(feed_fit.<span class="fl">1.</span>resid)</span>
 <span id="cb104-2"><a href="#cb104-2" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(sresid) </span>
 <span id="cb104-3"><a href="#cb104-3" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">a =</span> <span class="dv">0</span> , <span class="at">b =</span> <span class="dv">1</span>) <span class="co"># add line: y=x </span></span></code></pre></div>
-<p><img src="anova_files/figure-html/Feedback: One-way Random Effect - checking assumptions2-1.png" width="672" /></p>
+<p><img src="anova_files/figure-html/Feedback%20One%20way%20Random%20Effect%20%20checking%20assumptions2-1.png" width="672" /></p>
 <div class="sourceCode" id="cb105"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb105-1"><a href="#cb105-1" aria-hidden="true" tabindex="-1"></a><span class="co"># we can also use: </span></span>
 <span id="cb105-2"><a href="#cb105-2" aria-hidden="true" tabindex="-1"></a><span class="co"># qqline(sresid)</span></span></code></pre></div>
 <p>We can also get “estimates” (conditional means) of the random effects <span class="math inline">\(a_i\)</span> with the function <code>ranef</code>:</p>
 <div class="sourceCode" id="cb106"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb106-1"><a href="#cb106-1" aria-hidden="true" tabindex="-1"></a>sresid_ref <span class="ot">=</span> <span class="fu">ranef</span>(feed_fit<span class="fl">.1</span>)<span class="sc">$</span>id[, <span class="st">&quot;(Intercept)&quot;</span>] <span class="sc">/</span> <span class="fu">sd</span>(<span class="fu">ranef</span>(feed_fit<span class="fl">.1</span>)<span class="sc">$</span>id[, <span class="st">&quot;(Intercept)&quot;</span>])</span>
 <span id="cb106-2"><a href="#cb106-2" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(sresid_ref, <span class="at">main =</span> <span class="st">&quot;Random effects&quot;</span>)</span>
 <span id="cb106-3"><a href="#cb106-3" aria-hidden="true" tabindex="-1"></a><span class="fu">qqline</span>(sresid_ref)</span></code></pre></div>
-<p><img src="anova_files/figure-html/Feedback: One-way Random Effect - checking assumptions3-1.png" width="672" /></p>
+<p><img src="anova_files/figure-html/Feedback%20One%20way%20Random%20Effect%20%20checking%20assumptions3-1.png" width="672" /></p>
 </div>
 <div id="mixed-model-random-effect" class="section level4">
 <h4>Mixed Model Random Effect</h4>
@@ -1192,11 +1192,11 @@ Ranking of movies from different genres by women and men.</p>
 <span id="cb114-17"><a href="#cb114-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">qqline</span>(sresid)</span>
 <span id="cb114-18"><a href="#cb114-18" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <div class="sourceCode" id="cb115"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb115-1"><a href="#cb115-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resid_plot</span>(feed_fit<span class="fl">.2</span>)</span></code></pre></div>
-<p><img src="anova_files/figure-html/Feedback: Mixed Model Random Effect - checking assumptions 1-1.png" width="672" /></p>
+<p><img src="anova_files/figure-html/Feedback%20%20Mixed%20Model%20Random%20Effect%20%20checking%20assumptions%201-1.png" width="672" /></p>
 <div class="sourceCode" id="cb116"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb116-1"><a href="#cb116-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qq_plot</span>(feed_fit<span class="fl">.2</span>)</span></code></pre></div>
-<p><img src="anova_files/figure-html/Feedback: Mixed Model Random Effect - checking assumptions 1-2.png" width="672" /></p>
+<p><img src="anova_files/figure-html/Feedback%20%20Mixed%20Model%20Random%20Effect%20%20checking%20assumptions%201-2.png" width="672" /></p>
 <div class="sourceCode" id="cb117"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb117-1"><a href="#cb117-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qq_plot_ref</span>(feed_fit<span class="fl">.2</span>)</span></code></pre></div>
-<p><img src="anova_files/figure-html/Feedback: Mixed Model Random Effect - checking assumptions 1-3.png" width="672" /></p>
+<p><img src="anova_files/figure-html/Feedback%20%20Mixed%20Model%20Random%20Effect%20%20checking%20assumptions%201-3.png" width="672" /></p>
 </div>
 <div id="option-2-1" class="section level5">
 <h5><strong>Option 2</strong></h5>
@@ -1247,11 +1247,11 @@ Ranking of movies from different genres by women and men.</p>
 ## feedbackpositive    -5.377742 -2.176461</code></pre>
 <p><strong>Checking Assumptions</strong></p>
 <div class="sourceCode" id="cb125"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb125-1"><a href="#cb125-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resid_plot</span>(feed_fit<span class="fl">.3</span>)</span></code></pre></div>
-<p><img src="anova_files/figure-html/Feedback: Mixed Model Random Effect - checking assumptions 2-1.png" width="672" /></p>
+<p><img src="anova_files/figure-html/Feedback%20%20Mixed%20Model%20Random%20Effect%20%20checking%20assumptions%202-1.png" width="672" /></p>
 <div class="sourceCode" id="cb126"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb126-1"><a href="#cb126-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qq_plot</span>(feed_fit<span class="fl">.3</span>)</span></code></pre></div>
-<p><img src="anova_files/figure-html/Feedback: Mixed Model Random Effect - checking assumptions 2-2.png" width="672" /></p>
+<p><img src="anova_files/figure-html/Feedback%20%20Mixed%20Model%20Random%20Effect%20%20checking%20assumptions%202-2.png" width="672" /></p>
 <div class="sourceCode" id="cb127"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb127-1"><a href="#cb127-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qq_plot_ref</span>(feed_fit<span class="fl">.3</span>)</span></code></pre></div>
-<p><img src="anova_files/figure-html/Feedback: Mixed Model Random Effect - checking assumptions 2-3.png" width="672" /></p>
+<p><img src="anova_files/figure-html/Feedback%20%20Mixed%20Model%20Random%20Effect%20%20checking%20assumptions%202-3.png" width="672" /></p>
 </div>
 <div id="option-3" class="section level5">
 <h5><strong>Option 3</strong></h5>
@@ -3680,11 +3680,11 @@ Ranking of movies from different genres by women and men.</p>
 ## 2376 22      2   12    66.27830 no feedback   emg_tr</code></pre>
 <p><strong>Checking Assumptions</strong></p>
 <div class="sourceCode" id="cb134"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb134-1"><a href="#cb134-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resid_plot</span>(feed_fit<span class="fl">.4</span>)</span></code></pre></div>
-<p><img src="anova_files/figure-html/Feedback: Mixed Model Random Effect - checking assumptions 3-1.png" width="672" /></p>
+<p><img src="anova_files/figure-html/Feedback%20Mixed%20Model%20Random%20Effect%20checking%20assumptions%203-1.png" width="672" /></p>
 <div class="sourceCode" id="cb135"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb135-1"><a href="#cb135-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qq_plot</span>(feed_fit<span class="fl">.4</span>)</span></code></pre></div>
-<p><img src="anova_files/figure-html/Feedback: Mixed Model Random Effect - checking assumptions 3-2.png" width="672" /></p>
+<p><img src="anova_files/figure-html/Feedback%20Mixed%20Model%20Random%20Effect%20checking%20assumptions%203-2.png" width="672" /></p>
 <div class="sourceCode" id="cb136"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb136-1"><a href="#cb136-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qq_plot_ref</span>(feed_fit<span class="fl">.4</span>)</span></code></pre></div>
-<p><img src="anova_files/figure-html/Feedback: Mixed Model Random Effect - checking assumptions 3-3.png" width="672" /></p>
+<p><img src="anova_files/figure-html/Feedback%20Mixed%20Model%20Random%20Effect%20checking%20assumptions%203-3.png" width="672" /></p>
 </div>
 </div>
 </div>
