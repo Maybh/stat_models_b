@@ -8,7 +8,7 @@
 
 - [Losigtic Regression](logistic_reg.html) 
 
--[ Multinomial Regression](mult_reg.html) 
+- [ Multinomial Regression](mult_reg.html) 
 
 
 - [Poisson Regression](poisson_reg.html) 
