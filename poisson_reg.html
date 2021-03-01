@@ -384,7 +384,7 @@ div.tocify {
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> <span class="fu">mutate_at</span>(<span class="fu">vars</span>(month, year, day) , as.factor) <span class="sc">%&gt;%</span></span>
 <span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">weekday =</span> <span class="fu">fct_relevel</span>(day,  <span class="st">&quot;Monday&quot;</span>, <span class="st">&quot;Tuesday&quot;</span>, <span class="st">&quot;Wednesday&quot;</span>, <span class="st">&quot;Thursday&quot;</span>, <span class="st">&quot;Friday&quot;</span>, <span class="st">&quot;Saturday&quot;</span>, <span class="st">&quot;Sunday&quot;</span>)) <span class="sc">%&gt;%</span></span>
 <span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">precipitation =</span> <span class="fu">as.numeric</span>( <span class="fu">str_replace</span>(precipitation,<span class="st">&quot;</span><span class="sc">\\</span><span class="st">(S</span><span class="sc">\\</span><span class="st">)&quot;</span>, <span class="st">&quot;&quot;</span> )))</span></code></pre></div>
-<pre><code>## Warning: NAs introduced by coercion</code></pre>
+<pre><code>## Warning in mask$eval_all_mutate(quo): NAs introduced by coercion</code></pre>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>bikes_df <span class="ot">=</span> bikes_df <span class="sc">%&gt;%</span> <span class="fu">rename</span>(<span class="st">&quot;high_temp_f&quot;</span> <span class="ot">=</span> <span class="st">&quot;high_temp_u_fffd_f&quot;</span>,<span class="st">&quot;low_temp_f&quot;</span> <span class="ot">=</span> <span class="st">&quot;low_temp_u_fffd_f&quot;</span> )</span></code></pre></div>
 </div>
 <div id="descriptive-statistics" class="section level2">
@@ -403,7 +403,20 @@ div.tocify {
 ##  $ total              : num  11497 6922 4759 4335 9471 ...
 ##  $ month              : Factor w/ 7 levels &quot;04&quot;,&quot;05&quot;,&quot;06&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
 ##  $ year               : Factor w/ 1 level &quot;2016&quot;: 1 1 1 1 1 1 1 1 1 1 ...
-##  $ weekday            : Factor w/ 7 levels &quot;Monday&quot;,&quot;Tuesday&quot;,..: 5 6 7 1 2 3 4 5 6 7 ...</code></pre>
+##  $ weekday            : Factor w/ 7 levels &quot;Monday&quot;,&quot;Tuesday&quot;,..: 5 6 7 1 2 3 4 5 6 7 ...
+##  - attr(*, &quot;spec&quot;)=
+##   .. cols(
+##   ..   Date = col_character(),
+##   ..   Day = col_character(),
+##   ..   `High Temp (&lt;U+633C&gt;&lt;U+3E31&gt;F)` = col_double(),
+##   ..   `Low Temp (&lt;U+633C&gt;&lt;U+3E31&gt;F)` = col_double(),
+##   ..   Precipitation = col_character(),
+##   ..   `Brooklyn Bridge` = col_number(),
+##   ..   `Manhattan Bridge` = col_number(),
+##   ..   `Williamsburg Bridge` = col_number(),
+##   ..   `Queensboro Bridge` = col_number(),
+##   ..   Total = col_number()
+##   .. )</code></pre>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>hist_by_day <span class="ot">=</span> <span class="cf">function</span>(colname, title) {</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  bikes_df <span class="sc">%&gt;%</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>weekday, <span class="at">y=</span> {{colname}}, <span class="at">color =</span> weekday)) <span class="sc">+</span></span>
@@ -820,17 +833,20 @@ div.tocify {
 <div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>Insurance <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>age, <span class="at">y =</span> rate, <span class="at">fill =</span> age   )) <span class="sc">+</span> </span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
 <span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">&quot;Pastel1&quot;</span>) <span class="sc">+</span></span>
-<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>( <span class="at">position=</span><span class="fu">position_jitter</span>(<span class="at">w=</span><span class="fl">0.1</span>,<span class="at">h=</span><span class="fl">0.1</span>) )</span></code></pre></div>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>( <span class="at">position=</span><span class="fu">position_jitter</span>(<span class="at">w=</span><span class="fl">0.1</span>,<span class="at">h=</span><span class="fl">0.1</span>) ) <span class="sc">+</span></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;&quot;</span>)</span></code></pre></div>
 <p><img src="poisson_reg_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
 <div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>Insurance <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>group, <span class="at">y =</span> rate, <span class="at">fill =</span> group   )) <span class="sc">+</span> </span>
 <span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
 <span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">&quot;Pastel1&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>( <span class="at">position=</span><span class="fu">position_jitter</span>(<span class="at">w=</span><span class="fl">0.1</span>,<span class="at">h=</span><span class="fl">0.1</span>) )</span></code></pre></div>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>( <span class="at">position=</span><span class="fu">position_jitter</span>(<span class="at">w=</span><span class="fl">0.1</span>,<span class="at">h=</span><span class="fl">0.1</span>) ) <span class="sc">+</span></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;&quot;</span>)</span></code></pre></div>
 <p><img src="poisson_reg_files/figure-html/unnamed-chunk-20-2.png" width="672" /></p>
 <div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>Insurance <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>district, <span class="at">y =</span> rate, <span class="at">fill =</span> district)) <span class="sc">+</span> </span>
 <span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
 <span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">&quot;Pastel1&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>( <span class="at">position=</span><span class="fu">position_jitter</span>(<span class="at">w=</span><span class="fl">0.1</span>,<span class="at">h=</span><span class="fl">0.1</span>) )</span></code></pre></div>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>( <span class="at">position=</span><span class="fu">position_jitter</span>(<span class="at">w=</span><span class="fl">0.1</span>,<span class="at">h=</span><span class="fl">0.1</span>) ) <span class="sc">+</span></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;&quot;</span>)</span></code></pre></div>
 <p><img src="poisson_reg_files/figure-html/unnamed-chunk-20-3.png" width="672" /></p>
 <div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>Insurance <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>age, <span class="at">y =</span> rate , <span class="at">fill =</span> group    )) <span class="sc">+</span> </span>
 <span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>

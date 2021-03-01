@@ -253,17 +253,20 @@ Insurance = Insurance %>% mutate(rate = claims/holders )
 Insurance %>% ggplot(aes(x=age, y = rate, fill = age   )) + 
   geom_boxplot() +
   scale_fill_brewer(palette = "Pastel1") +
-  geom_jitter( position=position_jitter(w=0.1,h=0.1) )
+  geom_jitter( position=position_jitter(w=0.1,h=0.1) ) +
+  theme(legend.position = "")
 
 Insurance %>% ggplot(aes(x=group, y = rate, fill = group   )) + 
   geom_boxplot() +
   scale_fill_brewer(palette = "Pastel1") + 
-  geom_jitter( position=position_jitter(w=0.1,h=0.1) )
+  geom_jitter( position=position_jitter(w=0.1,h=0.1) ) +
+  theme(legend.position = "")
 
 Insurance %>% ggplot(aes(x=district, y = rate, fill = district)) + 
   geom_boxplot() +
   scale_fill_brewer(palette = "Pastel1") + 
-  geom_jitter( position=position_jitter(w=0.1,h=0.1) )
+  geom_jitter( position=position_jitter(w=0.1,h=0.1) ) +
+  theme(legend.position = "")
 
 ```
 

@@ -1,0 +1,126 @@
+---
+title: "Multinomial Regression"
+author: "May Ben-Hamo"
+output: 
+  html_document:
+    self_contained: false
+    toc: true
+    toc_float: true
+    toc_depth: 4
+    keep_tex: yes
+    theme: united
+    highlight: tango
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, warning=F, message=F}
+library(tidyverse)
+library(ggplot2)
+```
+
+
+# Iris dataset
+
+The Iris flower data set or Fisher's Iris data set is a multivariate data set introduced by the British statistician, eugenicist, and biologist Ronald Fisher in his 1936 paper The use of multiple measurements in taxonomic problems as an example of linear discriminant analysis.
+
+The data set consists of 50 samples from each of three species of Iris (Iris setosa, Iris virginica and Iris versicolor). Four features were measured from each sample: the length and the width of the sepals and petals, in centimeters. Based on the combination of these four features, Fisher developed a linear discriminant model to distinguish the species from each other.
+
+
+```{r}
+head(iris)
+
+iris_df = iris %>% rename_all(janitor::make_clean_names)
+str(iris_df)
+```
+
+```{r}
+pairs(iris_df[,-5], pch = 21,  
+      bg = c("#1b9e77", "#d95f02", "#7570b3")[unclass(iris_df$species)])
+```
+
+```{r}
+summary(iris_df)
+```
+
+```{r}
+plot_hist_by_species = function(col, colname) {
+  iris_df %>% ggplot(aes(x = species , y = {{col}}, color = species)) +
+  geom_boxplot() +  geom_jitter( alpha = .5, position=position_jitter(w=0.1,h=0.1) ) +
+  theme(legend.position = "") + labs(title = colname)
+}
+
+p1 = plot_hist_by_species(sepal_width, "Sepal Width")
+p2 = plot_hist_by_species(sepal_length, "Sepal Length")
+p3 = plot_hist_by_species(petal_length, "Petal Length")
+p4 = plot_hist_by_species(petal_width, "Petal Width")
+
+
+gridExtra::grid.arrange(p1, p2, p3, p4)
+
+
+```
+
+## Fitting Multinomial Regression 
+
+```{r, warning=F, message=F}
+library(VGAM)
+
+model_1 = vglm( species ~  sepal_length  +  sepal_width    + petal_length  +  petal_width, family=multinomial, iris_df)
+summary(model_1)
+```
+
+```{r}
+# reference group:virginica
+levels(iris_df$species)
+```
+
+## Predicting 
+
+
+```{r}
+preds_probs = predict(model_1, type = "response")
+preds = apply(preds_probs, MARGIN = 1, which.max)
+
+species_fun = function(level) return(levels(iris$Species)[level])
+preds_class = map_chr(preds, species_fun)
+
+# confusion matrix 
+table("Predicted" = preds_class, "Actual" = iris_df$species )
+```
+
+
+
+# Fishing Choice of Fishing Mode
+
+**Description** 
+
+A sample of 1182 individuals in the United-States for the choice of 4 alternative fishing modes.
+Format
+
+
+**Format**
+ 
+- `mode`: recreation mode choice, one of : beach, pier, boat and charter,
+- `price.beach`: price for beach mode
+- `price.pier`: price for pier mode
+- `price.boat`: price for private boat mode
+- `price.charter`: price for charter boat mode
+- `catch.beach`: catch rate for beach mode
+- `catch.pier`: catch rate for pier mode
+- `catch.boat`: catch rate for private boat mode
+- `catch.charter`: catch rate for charter boat mode
+- `income`: monthly income
+
+**Source**
+
+Cameron A, Trivedi P (2005). Microeconometrics. Cambridge University Press.
+https://EconPapers.repec.org/RePEc:cup:cbooks:9780521848053
+
+```{r}
+data("Fishing", package = "mlogit")
+```
+
