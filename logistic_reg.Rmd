@@ -61,6 +61,8 @@ Format:
 ```{r}
 str(mi_df)
 ```
+
+
 ```{r}
 dim(mi_df)
 ```
@@ -80,6 +82,9 @@ with(data = mi_df,  table(PerceivHealth, death_update ))
 with(data = mi_df,  table(RelIncome ))
 with(data = mi_df,  table(formersmoker ))
 with(data = mi_df,  table(CVDeath_2012, death_update))
+# lets remove the 21 obs for which death = 0 and cvdeath_2012 =1
+mi_df = mi_df[!((mi_df$death_update==0)& (mi_df$CVDeath_2012==1) ), ]
+
 with(data = mi_df,  prop.table(table(Sex, death_update)))
 
 
@@ -105,24 +110,24 @@ OR: $\frac{688\cdot111}{528\cdot111} =0.7455$
 
 
 ```{r}
-fit.1 = glm(death_update ~ formersmoker  ,data =mi_df ,family = 'binomial')
+fit_1 = glm(death_update ~ formersmoker  ,data =mi_df ,family = 'binomial')
 
 ```
 
 
 ```{r}
-summary(fit.1)
+summary(fit_1)
 ```
 
 ```{r}
 # OR
-exp(coef(fit.1)[2])
+exp(coef(fit_1)[2])
 
 ```
 
 ```{r}
 # wald confidence interval of b1:
-confint.default(fit.1)
+confint.default(fit_1)
 
 # manualy
 # option 1 
@@ -133,7 +138,7 @@ ci_b1 = b1 + c(-1,1) * qnorm(.975) * sqrt(var_b1)
 ci_b1
 
 # option 2 
-b1 + c(-1,1) * qnorm(.975) * summary(fit.1)$coefficient[2,2]
+b1 + c(-1,1) * qnorm(.975) * summary(fit_1)$coefficient[2,2]
 ```
 
 ```{r}
@@ -143,12 +148,12 @@ exp(ci_b1)
 
 ```{r}
 # ci for probability of death when x=1 (formersmokre=1)
-b0 = as.numeric( coef(fit.1)[1] ) 
-b1 =as.numeric( coef(fit.1)[2] )
+b0 = as.numeric( coef(fit_1)[1] ) 
+b1 =as.numeric( coef(fit_1)[2] )
 
 contr = c(1,1)
-var_cbeta = t(contr) %*% vcov (fit.1) %*% contr
-beta_hat = as.numeric(coef(fit.1)) 
+var_cbeta = t(contr) %*% vcov (fit_1) %*% contr
+beta_hat = as.numeric(coef(fit_1)) 
 ci_lp = as.numeric( contr %*% beta_hat)  + c(-1,1) * qnorm(.975) * sqrt(as.numeric( var_cbeta))
 cat("CI of beta0+beta1:", ci_lp[1], ci_lp[2])
 
@@ -156,6 +161,21 @@ logit_fun = function(x) return(exp(x)/ (1+exp(x)))
 ci_p =  logit_fun(ci_lp)
 cat("CI of the probability of mortality for a formersmoker (X=1):", ci_p[1], ci_p[2] )
 ```
+
+
+**Hosmer-Lemeshow Goodness Of Fit Test**
+
+```{r, warning=F, message=F}
+library(ResourceSelection)
+set.seed(123)
+hoslem.test(mi_df$death_update, fitted(fit_1), g=10)
+hoslem.test(mi_df$death_update, fitted(fit_1), g=5)
+
+```
+
+
+
+
 
 
 #### X = Sex
@@ -167,11 +187,18 @@ with(data = mi_df,  prop.table(table(Sex , death_update)))
 
 
 ```{r}
-fit.2 =  glm(death_update ~ factor(Sex)  ,data =mi_df ,family = 'binomial')
-summary(fit.2)
+fit_2 =  glm(death_update ~ factor(Sex)  ,data =mi_df ,family = 'binomial')
+summary(fit_2)
 ```
 
+**Hosmer-Lemeshow Goodness Of Fit Test**
 
+```{r, warning=F, message=F}
+set.seed(123)
+hoslem.test(mi_df$death_update, fitted(fit_2), g=10)
+hoslem.test(mi_df$death_update, fitted(fit_2), g=5)
+
+```
 
 #### X =  Diabetes
 
@@ -293,6 +320,9 @@ fit.7 =  glm(death_update ~ Sex + Age + Health_Prob + Diabetes + factor(PerceivH
 summary(fit.7)
 ```
 
+
+
+
 ```{r}
 fit.8 =  glm(death_update ~ Sex + Age + Health_Prob + Diabetes + factor(PerceivHealth) +  formersmoker 
             + factor(RelIncome) ,data =mi_df ,family = 'binomial')
@@ -319,11 +349,23 @@ summary(fit.10)
 ```
 
 
+
+
 ```{r}
 fit.11 =  glm(death_update ~ Sex + Age * factor(RelIncome) * Health_Prob ,data =mi_df ,family = 'binomial')
 summary(fit.11)
 ```
 
+
+**Hosmer-Lemeshow Goodness Of Fit Test**
+
+```{r, warning=F, message=F}
+set.seed(123)
+hoslem.test(mi_df$death_update, fitted(fit.11), g=12)
+hoslem.test(mi_df$death_update, fitted(fit.11), g=10)
+hoslem.test(mi_df$death_update, fitted(fit.11), g=7)
+
+```
 
 
 # ????  Dataset

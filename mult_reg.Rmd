@@ -94,33 +94,133 @@ table("Predicted" = preds_class, "Actual" = iris_df$species )
 
 
 
-# Fishing Choice of Fishing Mode
+# National Election Study
 
-**Description** 
 
-A sample of 1182 individuals in the United-States for the choice of 4 alternative fishing modes.
-Format
+**Description**
 
+10 variable subset of the 1996 American National Election Study. Missing values and "don’t know" responses have been listwise deleted. Respondents expressing a voting preference other than Clinton or Dole have been removed  (Rosenstone, Kinder, and Miller (1997)).  
 
 **Format**
- 
-- `mode`: recreation mode choice, one of : beach, pier, boat and charter,
-- `price.beach`: price for beach mode
-- `price.pier`: price for pier mode
-- `price.boat`: price for private boat mode
-- `price.charter`: price for charter boat mode
-- `catch.beach`: catch rate for beach mode
-- `catch.pier`: catch rate for pier mode
-- `catch.boat`: catch rate for private boat mode
-- `catch.charter`: catch rate for charter boat mode
-- `income`: monthly income
 
-**Source**
+A data frame with 944 observations on the following 10 variables:
 
-Cameron A, Trivedi P (2005). Microeconometrics. Cambridge University Press.
-https://EconPapers.repec.org/RePEc:cup:cbooks:9780521848053
+- `popul` population of respondent’s location in 1000s of people
+- `TVnews` days in the past week spent watching news on TV
+- `selfLR` Left-Right self-placement of respondent: an ordered factor with levels extremely liberal,
+extLib < liberal, Lib < slightly liberal, sliLib < moderate, Mod < slightly conservative,
+sliCon < conservative, Con < extremely conservative, extCon
+- `ClinLR` Left-Right placement of Bill Clinton (same scale as selfLR): an ordered factor with levels
+extLib < Lib < sliLib < Mod < sliCon < Con < extCon
+newhamp 67
+- `DoleLR`Left-Right placement of Bob Dole (same scale as selfLR): an ordered factor with levels
+extLib < Lib < sliLib < Mod < sliCon < Con < extCon
+- `PID` Party identification: an ordered factor with levels strong Democrat, strDem < weak Democrat,
+weakDem < independent Democrat, indDem < independent independentindind < indepedent
+Republican, indRep < waek Republican, weakRep < strong Republican, strRep
+- `age` Respondent’s age in years
+- `educ` Respondent’s education: an ordered factor with levels 8 years or less, MS < high school
+dropout, HSdrop < high school diploma or GED, HS < some College, Coll < Community
+or junior College degree, CCdeg < BA degree, BAdeg < postgraduate degree, MAdeg
+`income` Respondent’s family income: an ordered factor with levels $3Kminus < $3K-$5K < $5K-$7K
+< $7K-$9K < $9K-$10K < $10K-$11K < $11K-$12K < $12K-$13K < $13K-$14K < $14K-$15K <
+$15K-$17K < $17K-$20K < $20K-$22K < $22K-$25K < $25K-$30K < $30K-$35K < $35K-$40K
+< $40K-$45K < $45K-$50K < $50K-$60K < $60K-$75K < $75K-$90K < $90K-$105K < $105Kplus
+vote Expected vote in 1996 presidential election: a factor with levels Clinton and Dole
+
+
+**Source**: Faraway Book: 
+
+
+
+```{r, warning=F, message=F}
+library(faraway)
+data(nes96)
+str(nes96)
+```
+
 
 ```{r}
-data("Fishing", package = "mlogit")
+summary(nes96)
 ```
+
+The response will be party identification of the respondent: Democrat, Independent or Republican. The original data involved more than three categories; They collapse this to three for simplicity.
+
+```{r}
+nes96$PID_new = case_when(
+  nes96$PID %in% c("strDem", "weakDem") ~ "Democrat",
+  nes96$PID %in% c("indDem", "indind", "indRep") ~ "Independent",
+  nes96$PID %in% c("weakRep", "strRep") ~ "Republican"
+)
+
+table(nes96$PID_new)
+```
+
+For simplicity, they consider only the age, education level and income group of the respondents.
+
+```{r}
+# unique(nes96$income)
+
+
+nes96 %>% group_by(income) %>% mutate(sum_inc = n()) %>% ungroup() %>% group_by(income, PID_new) %>%
+  summarise(n = n(), pct = n/ sum_inc) %>%
+  ggplot( aes( x= income, y= pct, col = PID_new, group = PID_new)) +
+  geom_point() + geom_line(alpha = .5, size =1.5) + 
+  theme(axis.text.x =  element_text(angle  = 90))
+```
+
+In the book they converted income variable to a numberic variable by taking the midpoint of each range, lets do the same ( we don't want to estimate too much parameters):
+
+```{r}
+mid_points <- c(1.5,4,6,8,9.5,10.5,11.5,12.5,13.5,14.5,16,18.5,21,23.5,27.5,32.5,37.5,42.5,47.5,55,67.5,82.5,97.5,115)
+nes96$numeric_income <- mid_points[unclass(nes96$income)]
+summary(nes96$numeric_income)
+```
+
+
+
+```{r}
+nes96 %>% group_by(educ) %>% mutate(sum_inc = n()) %>% ungroup() %>% group_by(educ, PID_new) %>%
+  summarise(n = n(), pct = n/ sum_inc) %>%
+  ggplot( aes( x= educ, y= pct, col = PID_new, group = PID_new)) +
+  geom_point() + geom_line(alpha = .5, size =1.5) 
+```
+
+```{r}
+nes96 %>% ggplot( aes(  age,  fill = PID_new, color = PID_new)) +
+  geom_histogram(aes(y=..density..) , bins = 15, alpha = .8,  color = 'white', position = 'dodge') + 
+  geom_density(alpha=.15, fill = 'white')
+
+
+```
+
+
+
+```{r, warning=F, message=F}
+library(VGAM)
+
+model_2 = vglm( PID_new ~  age  +  numeric_income     , family=multinomial, nes96)
+summary(model_2)
+```
+
+```{r}
+# ref category - republican
+levels(factor(nes96$PID_new))
+```
+
+```{r}
+predict(model_2,data.frame(age = 25, numeric_income=0),type="response")
+predict(model_2,data.frame(age = 25, numeric_income=median(nes96$numeric_income)),type="response")
+predict(model_2,data.frame(age = 25, numeric_income=mean(nes96$numeric_income)),type="response")
+predict(model_2,data.frame(age = 50, numeric_income=median(nes96$numeric_income)),type="response")
+predict(model_2,data.frame(age = 70, numeric_income=median(nes96$numeric_income)),type="response")
+```
+
+
+
+```{r}
+model_3 = vglm( PID_new ~  age  +  numeric_income + educ    , family=multinomial, nes96)
+summary(model_3)
+```
+
 

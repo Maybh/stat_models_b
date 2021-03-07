@@ -454,26 +454,194 @@ div.tocify {
 ##   virginica       0          1        49</code></pre>
 </div>
 </div>
-<div id="fishing-choice-of-fishing-mode" class="section level1">
-<h1>Fishing Choice of Fishing Mode</h1>
+<div id="national-election-study" class="section level1">
+<h1>National Election Study</h1>
 <p><strong>Description</strong></p>
-<p>A sample of 1182 individuals in the United-States for the choice of 4 alternative fishing modes. Format</p>
+<p>10 variable subset of the 1996 American National Election Study. Missing values and “don’t know” responses have been listwise deleted. Respondents expressing a voting preference other than Clinton or Dole have been removed (Rosenstone, Kinder, and Miller (1997)).</p>
 <p><strong>Format</strong></p>
+<p>A data frame with 944 observations on the following 10 variables:</p>
 <ul>
-<li><code>mode</code>: recreation mode choice, one of : beach, pier, boat and charter,</li>
-<li><code>price.beach</code>: price for beach mode</li>
-<li><code>price.pier</code>: price for pier mode</li>
-<li><code>price.boat</code>: price for private boat mode</li>
-<li><code>price.charter</code>: price for charter boat mode</li>
-<li><code>catch.beach</code>: catch rate for beach mode</li>
-<li><code>catch.pier</code>: catch rate for pier mode</li>
-<li><code>catch.boat</code>: catch rate for private boat mode</li>
-<li><code>catch.charter</code>: catch rate for charter boat mode</li>
-<li><code>income</code>: monthly income</li>
+<li><code>popul</code> population of respondent’s location in 1000s of people</li>
+<li><code>TVnews</code> days in the past week spent watching news on TV</li>
+<li><code>selfLR</code> Left-Right self-placement of respondent: an ordered factor with levels extremely liberal, extLib &lt; liberal, Lib &lt; slightly liberal, sliLib &lt; moderate, Mod &lt; slightly conservative, sliCon &lt; conservative, Con &lt; extremely conservative, extCon</li>
+<li><code>ClinLR</code> Left-Right placement of Bill Clinton (same scale as selfLR): an ordered factor with levels extLib &lt; Lib &lt; sliLib &lt; Mod &lt; sliCon &lt; Con &lt; extCon newhamp 67</li>
+<li><code>DoleLR</code>Left-Right placement of Bob Dole (same scale as selfLR): an ordered factor with levels extLib &lt; Lib &lt; sliLib &lt; Mod &lt; sliCon &lt; Con &lt; extCon</li>
+<li><code>PID</code> Party identification: an ordered factor with levels strong Democrat, strDem &lt; weak Democrat, weakDem &lt; independent Democrat, indDem &lt; independent independentindind &lt; indepedent Republican, indRep &lt; waek Republican, weakRep &lt; strong Republican, strRep</li>
+<li><code>age</code> Respondent’s age in years</li>
+<li><code>educ</code> Respondent’s education: an ordered factor with levels 8 years or less, MS &lt; high school dropout, HSdrop &lt; high school diploma or GED, HS &lt; some College, Coll &lt; Community or junior College degree, CCdeg &lt; BA degree, BAdeg &lt; postgraduate degree, MAdeg <code>income</code> Respondent’s family income: an ordered factor with levels $3Kminus &lt; $3K-$5K &lt; $5K-$7K &lt; $7K-$9K &lt; $9K-$10K &lt; $10K-$11K &lt; $11K-$12K &lt; $12K-$13K &lt; $13K-$14K &lt; $14K-$15K &lt; $15K-$17K &lt; $17K-$20K &lt; $20K-$22K &lt; $22K-$25K &lt; $25K-$30K &lt; $30K-$35K &lt; $35K-$40K &lt; $40K-$45K &lt; $45K-$50K &lt; $50K-$60K &lt; $60K-$75K &lt; $75K-$90K &lt; $90K-$105K &lt; $105Kplus vote Expected vote in 1996 presidential election: a factor with levels Clinton and Dole</li>
 </ul>
-<p><strong>Source</strong></p>
-<p>Cameron A, Trivedi P (2005). Microeconometrics. Cambridge University Press. <a href="https://EconPapers.repec.org/RePEc:cup:cbooks:9780521848053" class="uri">https://EconPapers.repec.org/RePEc:cup:cbooks:9780521848053</a></p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;Fishing&quot;</span>, <span class="at">package =</span> <span class="st">&quot;mlogit&quot;</span>)</span></code></pre></div>
+<p><strong>Source</strong>: Faraway Book:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(faraway)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(nes96)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(nes96)</span></code></pre></div>
+<pre><code>## &#39;data.frame&#39;:    944 obs. of  10 variables:
+##  $ popul : int  0 190 31 83 640 110 100 31 180 2800 ...
+##  $ TVnews: int  7 1 7 4 7 3 7 1 7 0 ...
+##  $ selfLR: Ord.factor w/ 7 levels &quot;extLib&quot;&lt;&quot;Lib&quot;&lt;..: 7 3 2 3 5 3 5 5 4 3 ...
+##  $ ClinLR: Ord.factor w/ 7 levels &quot;extLib&quot;&lt;&quot;Lib&quot;&lt;..: 1 3 2 4 6 4 6 4 6 3 ...
+##  $ DoleLR: Ord.factor w/ 7 levels &quot;extLib&quot;&lt;&quot;Lib&quot;&lt;..: 6 5 6 5 4 6 4 5 3 7 ...
+##  $ PID   : Ord.factor w/ 7 levels &quot;strDem&quot;&lt;&quot;weakDem&quot;&lt;..: 7 2 2 2 1 2 2 5 4 1 ...
+##  $ age   : int  36 20 24 28 68 21 77 21 31 39 ...
+##  $ educ  : Ord.factor w/ 7 levels &quot;MS&quot;&lt;&quot;HSdrop&quot;&lt;..: 3 4 6 6 6 4 4 4 4 3 ...
+##  $ income: Ord.factor w/ 24 levels &quot;$3Kminus&quot;&lt;&quot;$3K-$5K&quot;&lt;..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ vote  : Factor w/ 2 levels &quot;Clinton&quot;,&quot;Dole&quot;: 2 1 1 1 1 1 1 1 1 1 ...</code></pre>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(nes96)</span></code></pre></div>
+<pre><code>##      popul            TVnews         selfLR       ClinLR       DoleLR   
+##  Min.   :   0.0   Min.   :0.000   extLib: 16   extLib:109   extLib: 13  
+##  1st Qu.:   1.0   1st Qu.:1.000   Lib   :103   Lib   :317   Lib   : 31  
+##  Median :  22.0   Median :3.000   sliLib:147   sliLib:236   sliLib: 43  
+##  Mean   : 306.4   Mean   :3.728   Mod   :256   Mod   :160   Mod   : 87  
+##  3rd Qu.: 110.0   3rd Qu.:7.000   sliCon:170   sliCon: 67   sliCon:195  
+##  Max.   :7300.0   Max.   :7.000   Con   :218   Con   : 36   Con   :460  
+##                                   extCon: 34   extCon: 19   extCon:115  
+##       PID           age            educ           income         vote    
+##  strDem :200   Min.   :19.00   MS    : 13   $60K-$75K:103   Clinton:551  
+##  weakDem:180   1st Qu.:34.00   HSdrop: 52   $50K-$60K:100   Dole   :393  
+##  indDem :108   Median :44.00   HS    :248   $30K-$35K: 70                
+##  indind : 37   Mean   :47.04   Coll  :187   $25K-$30K: 68                
+##  indRep : 94   3rd Qu.:58.00   CCdeg : 90   $105Kplus: 68                
+##  weakRep:150   Max.   :91.00   BAdeg :227   $35K-$40K: 62                
+##  strRep :175                   MAdeg :127   (Other)  :473</code></pre>
+<p>The response will be party identification of the respondent: Democrat, Independent or Republican. The original data involved more than three categories; They collapse this to three for simplicity.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>nes96<span class="sc">$</span>PID_new <span class="ot">=</span> <span class="fu">case_when</span>(</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  nes96<span class="sc">$</span>PID <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;strDem&quot;</span>, <span class="st">&quot;weakDem&quot;</span>) <span class="sc">~</span> <span class="st">&quot;Democrat&quot;</span>,</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  nes96<span class="sc">$</span>PID <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;indDem&quot;</span>, <span class="st">&quot;indind&quot;</span>, <span class="st">&quot;indRep&quot;</span>) <span class="sc">~</span> <span class="st">&quot;Independent&quot;</span>,</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  nes96<span class="sc">$</span>PID <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;weakRep&quot;</span>, <span class="st">&quot;strRep&quot;</span>) <span class="sc">~</span> <span class="st">&quot;Republican&quot;</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(nes96<span class="sc">$</span>PID_new)</span></code></pre></div>
+<pre><code>## 
+##    Democrat Independent  Republican 
+##         380         239         325</code></pre>
+<p>For simplicity, they consider only the age, education level and income group of the respondents.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># unique(nes96$income)</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>nes96 <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(income) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">sum_inc =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span> <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(income, PID_new) <span class="sc">%&gt;%</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">n</span>(), <span class="at">pct =</span> n<span class="sc">/</span> sum_inc) <span class="sc">%&gt;%</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>( <span class="fu">aes</span>( <span class="at">x=</span> income, <span class="at">y=</span> pct, <span class="at">col =</span> PID_new, <span class="at">group =</span> PID_new)) <span class="sc">+</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_line</span>(<span class="at">alpha =</span> .<span class="dv">5</span>, <span class="at">size =</span><span class="fl">1.5</span>) <span class="sc">+</span> </span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span>  <span class="fu">element_text</span>(<span class="at">angle  =</span> <span class="dv">90</span>))</span></code></pre></div>
+<pre><code>## `summarise()` has grouped output by &#39;income&#39;, &#39;PID_new&#39;. You can override using the `.groups` argument.</code></pre>
+<p><img src="mult_reg_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p>In the book they converted income variable to a numberic variable by taking the midpoint of each range, lets do the same ( we don’t want to estimate too much parameters):</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>mid_points <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">1.5</span>,<span class="dv">4</span>,<span class="dv">6</span>,<span class="dv">8</span>,<span class="fl">9.5</span>,<span class="fl">10.5</span>,<span class="fl">11.5</span>,<span class="fl">12.5</span>,<span class="fl">13.5</span>,<span class="fl">14.5</span>,<span class="dv">16</span>,<span class="fl">18.5</span>,<span class="dv">21</span>,<span class="fl">23.5</span>,<span class="fl">27.5</span>,<span class="fl">32.5</span>,<span class="fl">37.5</span>,<span class="fl">42.5</span>,<span class="fl">47.5</span>,<span class="dv">55</span>,<span class="fl">67.5</span>,<span class="fl">82.5</span>,<span class="fl">97.5</span>,<span class="dv">115</span>)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>nes96<span class="sc">$</span>numeric_income <span class="ot">&lt;-</span> mid_points[<span class="fu">unclass</span>(nes96<span class="sc">$</span>income)]</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(nes96<span class="sc">$</span>numeric_income)</span></code></pre></div>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##    1.50   23.50   37.50   46.58   67.50  115.00</code></pre>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>nes96 <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(educ) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">sum_inc =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span> <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(educ, PID_new) <span class="sc">%&gt;%</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">n</span>(), <span class="at">pct =</span> n<span class="sc">/</span> sum_inc) <span class="sc">%&gt;%</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>( <span class="fu">aes</span>( <span class="at">x=</span> educ, <span class="at">y=</span> pct, <span class="at">col =</span> PID_new, <span class="at">group =</span> PID_new)) <span class="sc">+</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_line</span>(<span class="at">alpha =</span> .<span class="dv">5</span>, <span class="at">size =</span><span class="fl">1.5</span>) </span></code></pre></div>
+<pre><code>## `summarise()` has grouped output by &#39;educ&#39;, &#39;PID_new&#39;. You can override using the `.groups` argument.</code></pre>
+<p><img src="mult_reg_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>nes96 <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>( <span class="fu">aes</span>(  age,  <span class="at">fill =</span> PID_new, <span class="at">color =</span> PID_new)) <span class="sc">+</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y=</span>..density..) , <span class="at">bins =</span> <span class="dv">15</span>, <span class="at">alpha =</span> .<span class="dv">8</span>,  <span class="at">color =</span> <span class="st">&#39;white&#39;</span>, <span class="at">position =</span> <span class="st">&#39;dodge&#39;</span>) <span class="sc">+</span> </span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">alpha=</span>.<span class="dv">15</span>, <span class="at">fill =</span> <span class="st">&#39;white&#39;</span>)</span></code></pre></div>
+<p><img src="mult_reg_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(VGAM)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>model_2 <span class="ot">=</span> <span class="fu">vglm</span>( PID_new <span class="sc">~</span>  age  <span class="sc">+</span>  numeric_income     , <span class="at">family=</span>multinomial, nes96)</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model_2)</span></code></pre></div>
+<pre><code>## 
+## Call:
+## vglm(formula = PID_new ~ age + numeric_income, family = multinomial, 
+##     data = nes96)
+## 
+## Pearson residuals:
+##                       Min      1Q  Median     3Q   Max
+## log(mu[,1]/mu[,3]) -1.584 -0.8589 -0.4004 0.9952 2.218
+## log(mu[,2]/mu[,3]) -1.094 -0.8435 -0.2753 1.3800 2.016
+## 
+## Coefficients: 
+##                   Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept):1     1.154791   0.273651   4.220 2.44e-05 ***
+## (Intercept):2    -0.032387   0.310862  -0.104    0.917    
+## age:1            -0.004133   0.004700  -0.879    0.379    
+## age:2            -0.003907   0.005396  -0.724    0.469    
+## numeric_income:1 -0.017868   0.002667  -6.700 2.09e-11 ***
+## numeric_income:2 -0.001744   0.002654  -0.657    0.511    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Names of linear predictors: log(mu[,1]/mu[,3]), log(mu[,2]/mu[,3])
+## 
+## Residual deviance: 1984.539 on 1882 degrees of freedom
+## 
+## Log-likelihood: -992.2695 on 1882 degrees of freedom
+## 
+## Number of Fisher scoring iterations: 4 
+## 
+## No Hauck-Donner effect found in any of the estimates
+## 
+## 
+## Reference group is level  3  of the response</code></pre>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ref category - republican</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(<span class="fu">factor</span>(nes96<span class="sc">$</span>PID_new))</span></code></pre></div>
+<pre><code>## [1] &quot;Democrat&quot;    &quot;Independent&quot; &quot;Republican&quot;</code></pre>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">predict</span>(model_2,<span class="fu">data.frame</span>(<span class="at">age =</span> <span class="dv">25</span>, <span class="at">numeric_income=</span><span class="dv">0</span>),<span class="at">type=</span><span class="st">&quot;response&quot;</span>)</span></code></pre></div>
+<pre><code>##    Democrat Independent Republican
+## 1 0.6037795   0.1852455  0.2109751</code></pre>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">predict</span>(model_2,<span class="fu">data.frame</span>(<span class="at">age =</span> <span class="dv">25</span>, <span class="at">numeric_income=</span><span class="fu">median</span>(nes96<span class="sc">$</span>numeric_income)),<span class="at">type=</span><span class="st">&quot;response&quot;</span>)</span></code></pre></div>
+<pre><code>##    Democrat Independent Republican
+## 1 0.4455226   0.2502312  0.3042463</code></pre>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">predict</span>(model_2,<span class="fu">data.frame</span>(<span class="at">age =</span> <span class="dv">25</span>, <span class="at">numeric_income=</span><span class="fu">mean</span>(nes96<span class="sc">$</span>numeric_income)),<span class="at">type=</span><span class="st">&quot;response&quot;</span>)</span></code></pre></div>
+<pre><code>##    Democrat Independent Republican
+## 1 0.4076149   0.2650188  0.3273663</code></pre>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">predict</span>(model_2,<span class="fu">data.frame</span>(<span class="at">age =</span> <span class="dv">50</span>, <span class="at">numeric_income=</span><span class="fu">median</span>(nes96<span class="sc">$</span>numeric_income)),<span class="at">type=</span><span class="st">&quot;response&quot;</span>)</span></code></pre></div>
+<pre><code>##    Democrat Independent Republican
+## 1 0.4306501   0.2432487  0.3261012</code></pre>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">predict</span>(model_2,<span class="fu">data.frame</span>(<span class="at">age =</span> <span class="dv">70</span>, <span class="at">numeric_income=</span><span class="fu">median</span>(nes96<span class="sc">$</span>numeric_income)),<span class="at">type=</span><span class="st">&quot;response&quot;</span>)</span></code></pre></div>
+<pre><code>##    Democrat Independent Republican
+## 1 0.4184309   0.2374178  0.3441513</code></pre>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>model_3 <span class="ot">=</span> <span class="fu">vglm</span>( PID_new <span class="sc">~</span>  age  <span class="sc">+</span>  numeric_income <span class="sc">+</span> educ    , <span class="at">family=</span>multinomial, nes96)</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model_3)</span></code></pre></div>
+<pre><code>## 
+## Call:
+## vglm(formula = PID_new ~ age + numeric_income + educ, family = multinomial, 
+##     data = nes96)
+## 
+## Pearson residuals:
+##                       Min      1Q  Median    3Q   Max
+## log(mu[,1]/mu[,3]) -2.986 -0.8454 -0.3919 1.000 2.267
+## log(mu[,2]/mu[,3]) -2.318 -0.7826 -0.2850 1.198 2.283
+## 
+## Coefficients: 
+##                   Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept):1     1.642650   0.331255   4.959 7.09e-07 ***
+## (Intercept):2     0.445389   0.372285   1.196   0.2316    
+## age:1            -0.008194   0.004903  -1.671   0.0946 .  
+## age:2            -0.008041   0.005619  -1.431   0.1524    
+## numeric_income:1 -0.017247   0.002882  -5.985 2.17e-09 ***
+## numeric_income:2 -0.001008   0.002917  -0.345   0.7297    
+## educ.L:1         -1.194114   0.650009  -1.837   0.0662 .  
+## educ.L:2         -1.130593   0.713072  -1.586   0.1128    
+## educ.Q:1          1.229265   0.603936   2.035   0.0418 *  
+## educ.Q:2          1.107555   0.660372   1.677   0.0935 .  
+## educ.C:1         -0.154448   0.486465  -0.317   0.7509    
+## educ.C:2         -0.042485   0.531864  -0.080   0.9363    
+## educ^4:1          0.028269   0.360477   0.078   0.9375    
+## educ^4:2         -0.048311   0.397628  -0.121   0.9033    
+## educ^5:1          0.122118   0.269581   0.453   0.6506    
+## educ^5:2          0.258208   0.296246   0.872   0.3834    
+## educ^6:1          0.037413   0.203183   0.184   0.8539    
+## educ^6:2          0.191694   0.226809   0.845   0.3980    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Names of linear predictors: log(mu[,1]/mu[,3]), log(mu[,2]/mu[,3])
+## 
+## Residual deviance: 1968.332 on 1870 degrees of freedom
+## 
+## Log-likelihood: -984.1663 on 1870 degrees of freedom
+## 
+## Number of Fisher scoring iterations: 4 
+## 
+## No Hauck-Donner effect found in any of the estimates
+## 
+## 
+## Reference group is level  3  of the response</code></pre>
 </div>
 
 
