@@ -171,7 +171,12 @@ contr = rbind(
 
 ### set up general linear hypothesis
 pairwise_res = glht(diet.aov,  linfct = mcp(Diet = contr))
-summary(pairwise_res)
+summary(pairwise_res,test = adjusted(type="none"))
+
+### t.test
+pairwise.t.test(diet$weight_loss, 
+                diet$Diet,
+                p.adjust.method = "none")
 
 # calpha = univariate_calpha() - without correction 
 pairwise_ci = confint(pairwise_res, calpha = univariate_calpha())
@@ -185,7 +190,15 @@ plot(pairwise_ci, xlab = "Weight loss diff")
 
 ##### Bonferroni Correction
 ```{r Bonferroni Correction }
-summary(pairwise_res, test = adjusted(type = 'bonf'))
+
+summary(pairwise_res, test = adjusted("bonferroni"))
+
+### t.test
+pairwise.t.test(diet$weight_loss, 
+                diet$Diet,
+                p.adjust.method = "bonferroni")
+
+
 
 alpha = 0.05 ; m = 3 
 pairwise_ci_bonferroni  =  confint(pairwise_res, level = 1- (alpha/m) , calpha = univariate_calpha())
