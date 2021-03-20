@@ -227,7 +227,7 @@ plot(pairwise_ci_tukey, xlab = "Weight loss diff")
 
 ```{r}
 #another way:
-summary( glht(pairwise_res,  test = adjusted("Tukey")))
+summary( glht(pairwise_res,  test = "Tukey"))
 
 # based on Studentized range statistic:
 TukeyHSD(diet.aov)

@@ -590,19 +590,19 @@ div.tocify {
 ## 
 ## Fit: aov(formula = weight_loss ~ Diet, data = diet)
 ## 
-## Quantile = 2.3918
+## Quantile = 2.3901
 ## 95% family-wise confidence level
 ##  
 ## 
 ## Linear Hypotheses:
 ##            Estimate lwr     upr    
-## 2 - 1 == 0 -0.2741  -1.8811  1.3329
-## 3 - 1 == 0  1.8481   0.2412  3.4551
-## 3 - 2 == 0  2.1222   0.5632  3.6812</code></pre>
+## 2 - 1 == 0 -0.2741  -1.8799  1.3318
+## 3 - 1 == 0  1.8481   0.2423  3.4540
+## 3 - 2 == 0  2.1222   0.5643  3.6801</code></pre>
 <div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(pairwise_ci_tukey, <span class="at">xlab =</span> <span class="st">&quot;Weight loss diff&quot;</span>)</span></code></pre></div>
 <p><img src="anova_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
 <div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co">#another way:</span></span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>( <span class="fu">glht</span>(pairwise_res,  <span class="at">test =</span> <span class="fu">adjusted</span>(<span class="st">&quot;Tukey&quot;</span>)))</span></code></pre></div>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>( <span class="fu">glht</span>(pairwise_res,  <span class="at">test =</span> <span class="st">&quot;Tukey&quot;</span>))</span></code></pre></div>
 <pre><code>## Warning in chkdots(...): Argument(s) &#39;complete&#39; passed to &#39;...&#39; are ignored
 
 ## Warning in chkdots(...): Argument(s) &#39;complete&#39; passed to &#39;...&#39; are ignored</code></pre>
@@ -611,9 +611,9 @@ div.tocify {
 ## 
 ## Linear Hypotheses:
 ##            Estimate Std. Error z value Pr(&gt;|z|)   
-## 2 - 1 == 0  -0.2741     0.6719  -0.408  0.91236   
-## 3 - 1 == 0   1.8481     0.6719   2.751  0.01643 * 
-## 3 - 2 == 0   2.1222     0.6518   3.256  0.00317 **
+## 2 - 1 == 0  -0.2741     0.6719  -0.408  0.91235   
+## 3 - 1 == 0   1.8481     0.6719   2.751  0.01639 * 
+## 3 - 2 == 0   2.1222     0.6518   3.256  0.00315 **
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## (Adjusted p values reported -- single-step method)</code></pre>
