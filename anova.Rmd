@@ -178,6 +178,8 @@ pairwise.t.test(diet$weight_loss,
                 diet$Diet,
                 p.adjust.method = "none")
 
+
+
 # calpha = univariate_calpha() - without correction 
 pairwise_ci = confint(pairwise_res, calpha = univariate_calpha())
 pairwise_ci
@@ -222,6 +224,16 @@ pairwise_ci_tukey
 ```{r}
 plot(pairwise_ci_tukey, xlab = "Weight loss diff")
 ```
+
+```{r}
+#another way:
+summary( glht(pairwise_res,  test = adjusted("Tukey")))
+
+# based on Studentized range statistic:
+TukeyHSD(diet.aov)
+```
+
+
 
 #### Multiple Comparisons
 
