@@ -213,25 +213,14 @@ plot(pairwise_ci_bonferroni)
 
 ##### Tukey's Method
 ```{r Tukeys Method }
-
-pairwise_res_tukey = glht(diet.aov,  linfct = mcp(Diet = "Tukey"))
-
-
-pairwise_ci_tukey = confint(pairwise_res_tukey)
-pairwise_ci_tukey
+pairwise_res_tukey = TukeyHSD(diet.aov)
+pairwise_res_tukey
 ```
 
 ```{r}
-plot(pairwise_ci_tukey, xlab = "Weight loss diff")
+plot(pairwise_res_tukey)
 ```
 
-```{r}
-#another way:
-summary( glht(pairwise_res,  test = "Tukey"))
-
-# based on Studentized range statistic:
-TukeyHSD(diet.aov)
-```
 
 
 
@@ -492,16 +481,13 @@ summary(aov_captain)
 
 #### Tuke's 95% CI's
 
-```{r}
-ricci_capt_tukey = glht(aov_captain,  linfct = mcp(Race = "Tukey"))
-
-
-ricci_capt_ci_tukey = confint(ricci_capt_tukey)
-ricci_capt_ci_tukey
+```{r  }
+ricci_capt_tukey = TukeyHSD(aov_captain)
+ricci_capt_tukey
 ```
 
-```{r ricci option 1 tukey cis}
-plot(ricci_capt_ci_tukey, xlab = "score diff")
+```{r}
+plot(ricci_capt_tukey)
 ```
 
 
@@ -513,17 +499,13 @@ aov_lieutenant = aov(Combine  ~ Race , data = Ricci %>% filter(Position == "Lieu
 summary(aov_lieutenant)
 ```
 
-```{r}
-ricci_lie_tukey = glht(aov_lieutenant,  linfct = mcp(Race = "Tukey"))
-
-
-ricci_lie_ci_tukey = confint(ricci_lie_tukey)
-ricci_lie_ci_tukey
+```{r }
+ricci_lie_tukey = TukeyHSD(aov_lieutenant)
+ricci_lie_tukey
 ```
 
-
-```{r ricci option 2 tukey cis}
-plot(ricci_lie_ci_tukey, xlab = "score diff")
+```{r}
+plot(ricci_lie_tukey)
 ```
 
 
